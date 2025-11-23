@@ -188,6 +188,24 @@ onUnmounted(() => {
   border-radius: 0;
   z-index: 9999;
   border: none;
+  /* 确保不会创建新的层叠上下文，避免遮挡弹窗 */
+  isolation: auto;
+  /* 确保全屏容器不会遮挡通过 Portal 渲染的弹窗 */
+  contain: layout style;
+}
+
+/* 确保全屏时弹窗能正确显示 - PopoverEditor 使用 createPortal 渲染到 body */
+/* 由于弹窗是渲染到 body 的，不需要特殊处理，但为了保险起见，确保 z-index 足够高 */
+.interactive-demo.is-fullscreen :deep(.annotation-popover) {
+  z-index: 99999 !important;
+}
+
+/* 确保全屏容器内的内容不会遮挡弹窗 */
+.interactive-demo.is-fullscreen .demo-container {
+  position: relative;
+  z-index: 1;
+  /* 确保容器不会创建新的层叠上下文 */
+  isolation: auto;
 }
 
 .demo-header {

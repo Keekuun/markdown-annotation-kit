@@ -19,28 +19,110 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
     const [note, setNote] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
+    const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
 
     // 将内部 ref 暴露给外部
     useImperativeHandle(forwardedRef, () => popoverRef.current as HTMLDivElement, []);
 
+    // 检测全屏状态并选择合适的容器
+    useEffect(() => {
+      const getFullscreenElement = (): Element | null => {
+        // 类型定义：浏览器前缀属性
+        interface DocumentWithPrefixes extends Document {
+          webkitFullscreenElement?: Element | null;
+          mozFullScreenElement?: Element | null;
+          msFullscreenElement?: Element | null;
+        }
+        const doc = document as DocumentWithPrefixes;
+        return (
+          document.fullscreenElement ||
+          doc.webkitFullscreenElement ||
+          doc.mozFullScreenElement ||
+          doc.msFullscreenElement ||
+          null
+        );
+      };
+
+      const updatePortalContainer = () => {
+        const fullscreenElement = getFullscreenElement();
+        if (fullscreenElement && fullscreenElement instanceof HTMLElement) {
+          // 如果在全屏模式，使用全屏元素作为容器
+          setPortalContainer(fullscreenElement);
+        } else {
+          // 否则使用 document.body
+          setPortalContainer(document.body);
+        }
+      };
+
+      // 初始设置
+      updatePortalContainer();
+
+      // 监听全屏状态变化
+      const events = [
+        "fullscreenchange",
+        "webkitfullscreenchange",
+        "mozfullscreenchange",
+        "MSFullscreenChange",
+      ];
+
+      events.forEach((event) => {
+        document.addEventListener(event, updatePortalContainer);
+      });
+
+      return () => {
+        events.forEach((event) => {
+          document.removeEventListener(event, updatePortalContainer);
+        });
+      };
+    }, []);
+
     // 智能定位：计算最佳位置，避免超出视口
     const popoverStyle = useMemo(() => {
-      if (!visible || typeof window === "undefined") {
+      if (!visible || typeof window === "undefined" || !portalContainer) {
         return null;
       }
 
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const scrollX = window.scrollX;
-      const scrollY = window.scrollY;
+      // 获取全屏元素（如果存在）
+      const getFullscreenElement = (): Element | null => {
+        // 类型定义：浏览器前缀属性
+        interface DocumentWithPrefixes extends Document {
+          webkitFullscreenElement?: Element | null;
+          mozFullScreenElement?: Element | null;
+          msFullscreenElement?: Element | null;
+        }
+        const doc = document as DocumentWithPrefixes;
+        return (
+          document.fullscreenElement ||
+          doc.webkitFullscreenElement ||
+          doc.mozFullScreenElement ||
+          doc.msFullscreenElement ||
+          null
+        );
+      };
 
-      // 选中文本的位置信息
+      const fullscreenElement = getFullscreenElement();
+      const isFullscreen = fullscreenElement !== null;
+
+      // 获取容器的边界信息
+      let containerRect: DOMRect;
+      if (isFullscreen && fullscreenElement instanceof HTMLElement) {
+        containerRect = fullscreenElement.getBoundingClientRect();
+      } else {
+        containerRect = {
+          left: 0,
+          top: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        } as DOMRect;
+      }
+
+      // 选中文本的位置信息（相对于视口）
       const selectionTop = position.y;
       const selectionBottom = position.y + position.height;
 
-      // 计算上方和下方可用空间
-      const spaceAbove = selectionTop - scrollY - 16;
-      const spaceBelow = scrollY + viewportHeight - selectionBottom - 16;
+      // 计算上方和下方可用空间（相对于容器）
+      const spaceAbove = selectionTop - containerRect.top - 16;
+      const spaceBelow = containerRect.top + containerRect.height - selectionBottom - 16;
 
       // 默认位置：选中文本上方
       let top: number;
@@ -61,30 +143,30 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
         // 如果上下空间都不足，选择空间更大的一侧
         if (spaceAbove > spaceBelow) {
           // 放在上方，但可能需要调整位置
-          top = Math.max(scrollY + 16, selectionTop - POPOVER_HEIGHT - GAP - ARROW_SIZE);
+          top = Math.max(containerRect.top + 16, selectionTop - POPOVER_HEIGHT - GAP - ARROW_SIZE);
           placement = "top";
         } else {
           // 放在下方，但可能需要调整位置
           top = Math.min(
-            scrollY + viewportHeight - POPOVER_HEIGHT - 16,
+            containerRect.top + containerRect.height - POPOVER_HEIGHT - 16,
             selectionBottom + GAP + ARROW_SIZE
           );
           placement = "bottom";
         }
       }
 
-      // 确保不超出视口
-      if (top < scrollY + 16) {
-        top = scrollY + 16;
+      // 确保不超出容器
+      if (top < containerRect.top + 16) {
+        top = containerRect.top + 16;
       }
-      if (top + POPOVER_HEIGHT > scrollY + viewportHeight - 16) {
-        top = scrollY + viewportHeight - POPOVER_HEIGHT - 16;
+      if (top + POPOVER_HEIGHT > containerRect.top + containerRect.height - 16) {
+        top = containerRect.top + containerRect.height - POPOVER_HEIGHT - 16;
       }
 
-      // 水平居中，但确保不超出视口
+      // 水平居中，但确保不超出容器
       let left = position.x - POPOVER_WIDTH / 2;
-      const minLeft = scrollX + 16;
-      const maxLeft = scrollX + viewportWidth - POPOVER_WIDTH - 16;
+      const minLeft = containerRect.left + 16;
+      const maxLeft = containerRect.left + containerRect.width - POPOVER_WIDTH - 16;
 
       if (left < minLeft) {
         left = minLeft;
@@ -101,7 +183,7 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
         placement,
         arrowLeft: `${Math.max(20, Math.min(POPOVER_WIDTH - 20, arrowLeft))}px`,
       };
-    }, [visible, position]);
+    }, [visible, position, portalContainer]);
 
     // 自动聚焦
     useEffect(() => {
@@ -167,7 +249,7 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
       };
     }, [visible, onCancel]);
 
-    if (!visible || !popoverStyle) {
+    if (!visible || !popoverStyle || !portalContainer) {
       return null;
     }
 
@@ -331,7 +413,7 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
           </div>
         </div>
       </div>,
-      document.body
+      portalContainer
     );
   }
 );

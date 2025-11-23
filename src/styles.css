@@ -626,7 +626,7 @@
 .annotation-popover {
   position: fixed;
   width: 320px;
-  z-index: 9999;
+  z-index: 99999;
   animation: popoverSlideIn 0.2s ease-out;
 }
 
