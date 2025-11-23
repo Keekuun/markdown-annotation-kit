@@ -109,69 +109,266 @@
   background: var(--markdown-annotator-text-tertiary);
 }
 
-/* Markdown Content Styles */
+/* Markdown Content Styles - GitHub Style */
+/* Headings */
 .markdown-annotator-content h1 {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 2em;
+  font-weight: 600;
   color: var(--markdown-annotator-text-primary);
-  margin: 32px 0 20px;
-  line-height: 1.2;
-  border-bottom: 2px solid var(--markdown-annotator-border);
-  padding-bottom: 12px;
+  margin: 24px 0 16px;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--markdown-annotator-border);
+  line-height: 1.25;
 }
 
 .markdown-annotator-content h2 {
-  font-size: 26px;
+  font-size: 1.5em;
   font-weight: 600;
   color: var(--markdown-annotator-text-primary);
-  margin: 28px 0 16px;
-  line-height: 1.3;
+  margin: 24px 0 16px;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--markdown-annotator-border);
+  line-height: 1.25;
 }
 
 .markdown-annotator-content h3 {
-  font-size: 22px;
+  font-size: 1.25em;
   font-weight: 600;
-  color: var(--markdown-annotator-text-secondary);
-  margin: 24px 0 14px;
-  line-height: 1.4;
+  color: var(--markdown-annotator-text-primary);
+  margin: 24px 0 16px;
+  line-height: 1.25;
 }
 
+.markdown-annotator-content h4 {
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--markdown-annotator-text-primary);
+  margin: 24px 0 16px;
+  line-height: 1.25;
+}
+
+.markdown-annotator-content h5 {
+  font-size: 0.875em;
+  font-weight: 600;
+  color: var(--markdown-annotator-text-primary);
+  margin: 24px 0 16px;
+  line-height: 1.25;
+}
+
+.markdown-annotator-content h6 {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--markdown-annotator-text-tertiary);
+  margin: 24px 0 16px;
+  line-height: 1.25;
+}
+
+/* Paragraphs */
 .markdown-annotator-content p {
   font-size: 16px;
+  color: var(--markdown-annotator-text-primary);
+  line-height: 1.6;
+  margin: 16px 0;
+  word-wrap: break-word;
+}
+
+/* Blockquotes - GitHub Style */
+.markdown-annotator-content blockquote {
+  padding: 0 1em;
+  color: var(--markdown-annotator-text-tertiary);
+  border-left: 0.25em solid #d0d7de;
+  margin: 16px 0;
+  background-color: var(--markdown-annotator-bg-tertiary);
+  border-radius: 0 var(--markdown-annotator-radius-sm) var(--markdown-annotator-radius-sm) 0;
+}
+
+.markdown-annotator-content blockquote > :first-child {
+  margin-top: 0;
+}
+
+.markdown-annotator-content blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-annotator-content blockquote p {
+  margin: 16px 0;
   color: var(--markdown-annotator-text-secondary);
-  line-height: 1.75;
-  margin: 12px 0;
+}
+
+/* Lists */
+.markdown-annotator-content ul,
+.markdown-annotator-content ol {
+  margin: 16px 0;
+  padding-left: 2em;
+  color: var(--markdown-annotator-text-primary);
+}
+
+.markdown-annotator-content ul {
+  list-style-type: disc;
+}
+
+.markdown-annotator-content ol {
+  list-style-type: decimal;
 }
 
 .markdown-annotator-content li {
   font-size: 16px;
-  color: var(--markdown-annotator-text-secondary);
-  line-height: 1.75;
-  margin: 6px 0;
+  color: var(--markdown-annotator-text-primary);
+  line-height: 1.6;
+  margin: 4px 0;
+  word-wrap: break-word;
 }
 
+.markdown-annotator-content li > p {
+  margin-top: 16px;
+}
+
+.markdown-annotator-content li + li {
+  margin-top: 0.25em;
+}
+
+.markdown-annotator-content ul ul,
+.markdown-annotator-content ol ul {
+  list-style-type: circle;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-annotator-content ul ul ul,
+.markdown-annotator-content ol ul ul,
+.markdown-annotator-content ol ol ul {
+  list-style-type: square;
+}
+
+/* Code */
 .markdown-annotator-content code {
-  background-color: var(--markdown-annotator-bg-tertiary);
-  padding: 2px 6px;
-  border-radius: var(--markdown-annotator-radius-sm);
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(175, 184, 193, 0.2);
+  border-radius: 6px;
   font-family: var(--markdown-annotator-font-mono);
-  font-size: 14px;
-  color: var(--markdown-annotator-error);
+  color: #e83e8c;
+  word-wrap: break-word;
 }
 
 .markdown-annotator-content pre {
-  background-color: #1f2937;
-  color: #f9fafb;
-  padding: var(--markdown-annotator-spacing-md);
-  border-radius: var(--markdown-annotator-radius-lg);
-  overflow-x: auto;
-  margin: var(--markdown-annotator-spacing-md) 0;
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  margin: 16px 0;
+  border: 1px solid var(--markdown-annotator-border);
 }
 
 .markdown-annotator-content pre code {
-  background-color: transparent;
-  color: inherit;
+  display: inline;
+  max-width: auto;
   padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+  color: var(--markdown-annotator-text-primary);
+  font-size: 100%;
+}
+
+/* Tables */
+.markdown-annotator-content table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow: auto;
+  margin: 16px 0;
+}
+
+.markdown-annotator-content table th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid var(--markdown-annotator-border);
+  background-color: var(--markdown-annotator-bg-tertiary);
+}
+
+.markdown-annotator-content table td {
+  padding: 6px 13px;
+  border: 1px solid var(--markdown-annotator-border);
+}
+
+.markdown-annotator-content table tr {
+  background-color: var(--markdown-annotator-bg);
+  border-top: 1px solid var(--markdown-annotator-border);
+}
+
+.markdown-annotator-content table tr:nth-child(2n) {
+  background-color: var(--markdown-annotator-bg-tertiary);
+}
+
+/* Horizontal Rule */
+.markdown-annotator-content hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: var(--markdown-annotator-border);
+  border: 0;
+  border-radius: var(--markdown-annotator-radius-sm);
+}
+
+/* Links */
+.markdown-annotator-content a {
+  color: var(--markdown-annotator-primary);
+  text-decoration: none;
+  transition: var(--markdown-annotator-transition);
+}
+
+.markdown-annotator-content a:hover {
+  text-decoration: underline;
+}
+
+/* Strong and Emphasis */
+.markdown-annotator-content strong {
+  font-weight: 600;
+  color: var(--markdown-annotator-text-primary);
+}
+
+.markdown-annotator-content em {
+  font-style: italic;
+  color: var(--markdown-annotator-text-primary);
+}
+
+/* Images */
+.markdown-annotator-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 16px 0;
+  border-radius: var(--markdown-annotator-radius-md);
+  box-shadow: var(--markdown-annotator-shadow-sm);
+}
+
+/* Task Lists (GitHub Flavored Markdown) */
+.markdown-annotator-content input[type="checkbox"] {
+  margin: 0 0.2em 0.25em -1.6em;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.markdown-annotator-content .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-annotator-content .task-list-item input[type="checkbox"] {
+  margin: 0 0.2em 0.25em 0;
+}
+
+/* Strikethrough */
+.markdown-annotator-content del {
+  text-decoration: line-through;
+  color: var(--markdown-annotator-text-tertiary);
 }
 
 /* Annotation Highlight Styles */

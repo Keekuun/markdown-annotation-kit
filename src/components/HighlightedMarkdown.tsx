@@ -54,11 +54,7 @@ export function HighlightedMarkdown({
             }
             return <span {...props}>{children}</span>;
           },
-          h1: ({ children }) => <h1>{children}</h1>,
-          h2: ({ children }) => <h2>{children}</h2>,
-          h3: ({ children }) => <h3>{children}</h3>,
-          p: ({ children }) => <p>{children}</p>,
-          li: ({ children }) => <li>{children}</li>,
+          // 所有其他元素使用默认渲染，样式由 CSS 控制
         }}
       >
         {contentWithHighlights}
