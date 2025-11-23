@@ -1,0 +1,520 @@
+/*!
+ * Markdown Annotation Kit - Professional Styles
+ * A production-ready React component for annotating Markdown documents
+ * 
+ * @version 1.0.0
+ * @license MIT
+ */
+
+:root {
+  /* Color Palette */
+  --markdown-annotator-primary: #2563eb;
+  --markdown-annotator-primary-hover: #1d4ed8;
+  --markdown-annotator-primary-active: #1e40af;
+  --markdown-annotator-primary-light: rgba(37, 99, 235, 0.1);
+  --markdown-annotator-primary-shadow: rgba(37, 99, 235, 0.2);
+  
+  /* Background Colors */
+  --markdown-annotator-bg: #ffffff;
+  --markdown-annotator-bg-secondary: #fafafa;
+  --markdown-annotator-bg-tertiary: #f9fafb;
+  
+  /* Text Colors */
+  --markdown-annotator-text-primary: #111827;
+  --markdown-annotator-text-secondary: #374151;
+  --markdown-annotator-text-tertiary: #6b7280;
+  --markdown-annotator-text-muted: #9ca3af;
+  
+  /* Border Colors */
+  --markdown-annotator-border: #e5e7eb;
+  --markdown-annotator-border-hover: #d1d5db;
+  
+  /* Error Colors */
+  --markdown-annotator-error: #dc2626;
+  --markdown-annotator-error-bg: #fee2e2;
+  --markdown-annotator-error-bg-hover: #fecaca;
+  
+  /* Spacing */
+  --markdown-annotator-spacing-xs: 4px;
+  --markdown-annotator-spacing-sm: 8px;
+  --markdown-annotator-spacing-md: 16px;
+  --markdown-annotator-spacing-lg: 24px;
+  --markdown-annotator-spacing-xl: 48px;
+  
+  /* Border Radius */
+  --markdown-annotator-radius-sm: 4px;
+  --markdown-annotator-radius-md: 6px;
+  --markdown-annotator-radius-lg: 8px;
+  --markdown-annotator-radius-xl: 12px;
+  
+  /* Shadows */
+  --markdown-annotator-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --markdown-annotator-shadow-md: 0 4px 12px rgba(37, 99, 235, 0.1);
+  --markdown-annotator-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  
+  /* Transitions */
+  --markdown-annotator-transition: all 0.2s ease;
+  
+  /* Fonts */
+  --markdown-annotator-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --markdown-annotator-font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.markdown-annotator-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--markdown-annotator-bg-secondary);
+  font-family: var(--markdown-annotator-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.markdown-annotator-content {
+  flex: 1;
+  padding: var(--markdown-annotator-spacing-xl);
+  overflow-y: auto;
+  background-color: var(--markdown-annotator-bg);
+  max-width: calc(100% - 400px);
+  box-shadow: var(--markdown-annotator-shadow-sm);
+  scroll-behavior: smooth;
+}
+
+.markdown-annotator-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.markdown-annotator-content::-webkit-scrollbar-track {
+  background: var(--markdown-annotator-bg-tertiary);
+}
+
+.markdown-annotator-content::-webkit-scrollbar-thumb {
+  background: var(--markdown-annotator-text-muted);
+  border-radius: var(--markdown-annotator-radius-sm);
+}
+
+.markdown-annotator-content::-webkit-scrollbar-thumb:hover {
+  background: var(--markdown-annotator-text-tertiary);
+}
+
+/* Markdown Content Styles */
+.markdown-annotator-content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--markdown-annotator-text-primary);
+  margin: 32px 0 20px;
+  line-height: 1.2;
+  border-bottom: 2px solid var(--markdown-annotator-border);
+  padding-bottom: 12px;
+}
+
+.markdown-annotator-content h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--markdown-annotator-text-primary);
+  margin: 28px 0 16px;
+  line-height: 1.3;
+}
+
+.markdown-annotator-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--markdown-annotator-text-secondary);
+  margin: 24px 0 14px;
+  line-height: 1.4;
+}
+
+.markdown-annotator-content p {
+  font-size: 16px;
+  color: var(--markdown-annotator-text-secondary);
+  line-height: 1.75;
+  margin: 12px 0;
+}
+
+.markdown-annotator-content li {
+  font-size: 16px;
+  color: var(--markdown-annotator-text-secondary);
+  line-height: 1.75;
+  margin: 6px 0;
+}
+
+.markdown-annotator-content code {
+  background-color: var(--markdown-annotator-bg-tertiary);
+  padding: 2px 6px;
+  border-radius: var(--markdown-annotator-radius-sm);
+  font-family: var(--markdown-annotator-font-mono);
+  font-size: 14px;
+  color: var(--markdown-annotator-error);
+}
+
+.markdown-annotator-content pre {
+  background-color: #1f2937;
+  color: #f9fafb;
+  padding: var(--markdown-annotator-spacing-md);
+  border-radius: var(--markdown-annotator-radius-lg);
+  overflow-x: auto;
+  margin: var(--markdown-annotator-spacing-md) 0;
+}
+
+.markdown-annotator-content pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+/* Annotation Highlight Styles */
+.annotation-highlight {
+  text-decoration: underline;
+  text-decoration-color: var(--markdown-annotator-primary);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: var(--markdown-annotator-transition);
+  padding: 2px 0;
+  position: relative;
+}
+
+.annotation-highlight:hover {
+  background-color: var(--markdown-annotator-primary-light);
+}
+
+.annotation-highlight:active {
+  background-color: var(--markdown-annotator-primary-light);
+  opacity: 0.8;
+}
+
+/* Sidebar Styles */
+.markdown-annotator-sidebar {
+  width: 400px;
+  border-left: 1px solid var(--markdown-annotator-border);
+  padding: var(--markdown-annotator-spacing-lg);
+  overflow-y: auto;
+  background-color: var(--markdown-annotator-bg-tertiary);
+  display: flex;
+  flex-direction: column;
+}
+
+.markdown-annotator-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.markdown-annotator-sidebar::-webkit-scrollbar-track {
+  background: var(--markdown-annotator-bg-tertiary);
+}
+
+.markdown-annotator-sidebar::-webkit-scrollbar-thumb {
+  background: var(--markdown-annotator-text-muted);
+  border-radius: 3px;
+}
+
+.markdown-annotator-sidebar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--markdown-annotator-spacing-lg);
+  padding-bottom: var(--markdown-annotator-spacing-md);
+  border-bottom: 1px solid var(--markdown-annotator-border);
+}
+
+.markdown-annotator-sidebar-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--markdown-annotator-radius-lg);
+  background: linear-gradient(135deg, var(--markdown-annotator-primary) 0%, var(--markdown-annotator-primary-hover) 100%);
+  color: white;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  box-shadow: 0 2px 8px var(--markdown-annotator-primary-shadow);
+}
+
+.markdown-annotator-sidebar-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--markdown-annotator-text-primary);
+}
+
+.markdown-annotator-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--markdown-annotator-text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.markdown-annotator-empty-icon {
+  font-size: 48px;
+  margin-bottom: var(--markdown-annotator-spacing-md);
+  opacity: 0.5;
+}
+
+/* Annotation Card Styles */
+.annotation-card {
+  border: 1px solid var(--markdown-annotator-border);
+  border-radius: var(--markdown-annotator-radius-lg);
+  background-color: var(--markdown-annotator-bg);
+  padding: var(--markdown-annotator-spacing-md);
+  margin-bottom: 12px;
+  transition: var(--markdown-annotator-transition);
+  cursor: pointer;
+  box-shadow: var(--markdown-annotator-shadow-sm);
+}
+
+.annotation-card:hover {
+  border-color: var(--markdown-annotator-primary);
+  box-shadow: var(--markdown-annotator-shadow-md);
+  transform: translateY(-1px);
+}
+
+.annotation-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.annotation-card-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.annotation-card-number {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--markdown-annotator-radius-md);
+  background: linear-gradient(135deg, var(--markdown-annotator-primary) 0%, var(--markdown-annotator-primary-hover) 100%);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px var(--markdown-annotator-primary-shadow);
+}
+
+.annotation-card-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--markdown-annotator-text-primary);
+}
+
+.annotation-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.annotation-card-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.annotation-card-button-edit {
+  background-color: var(--markdown-annotator-bg-tertiary);
+  color: var(--markdown-annotator-text-secondary);
+}
+
+.annotation-card-button-edit:hover {
+  background-color: var(--markdown-annotator-border);
+}
+
+.annotation-card-button-delete {
+  background-color: var(--markdown-annotator-error-bg);
+  color: var(--markdown-annotator-error);
+}
+
+.annotation-card-button-delete:hover {
+  background-color: var(--markdown-annotator-error-bg-hover);
+}
+
+.annotation-card-content {
+  margin: 0;
+  font-size: 14px;
+  color: var(--markdown-annotator-text-secondary);
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.annotation-card-edit-area {
+  margin-top: 8px;
+}
+
+.annotation-card-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: 2px solid var(--markdown-annotator-primary);
+  border-radius: var(--markdown-annotator-radius-md);
+  padding: 10px;
+  margin-bottom: 10px;
+  resize: vertical;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+  outline: none;
+  transition: var(--markdown-annotator-transition);
+}
+
+.annotation-card-textarea:focus {
+  border-color: var(--markdown-annotator-primary-hover);
+  box-shadow: 0 0 0 3px var(--markdown-annotator-primary-light);
+}
+
+.annotation-card-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.annotation-card-button-cancel {
+  padding: 6px 14px;
+  border: 1px solid var(--markdown-annotator-border);
+  border-radius: var(--markdown-annotator-radius-md);
+  background-color: var(--markdown-annotator-bg);
+  color: var(--markdown-annotator-text-tertiary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: var(--markdown-annotator-transition);
+}
+
+.annotation-card-button-cancel:hover {
+  background-color: var(--markdown-annotator-bg-tertiary);
+  border-color: var(--markdown-annotator-border-hover);
+}
+
+.annotation-card-button-confirm {
+  padding: 6px 14px;
+  border: none;
+  border-radius: var(--markdown-annotator-radius-md);
+  background: linear-gradient(135deg, var(--markdown-annotator-primary) 0%, var(--markdown-annotator-primary-hover) 100%);
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: var(--markdown-annotator-transition);
+  box-shadow: 0 2px 4px var(--markdown-annotator-primary-shadow);
+}
+
+.annotation-card-button-confirm:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--markdown-annotator-primary-hover) 0%, var(--markdown-annotator-primary-active) 100%);
+  box-shadow: 0 4px 8px var(--markdown-annotator-primary-shadow);
+}
+
+.annotation-card-button-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Float Window Styles */
+.annotation-float-window {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 320px;
+  background-color: var(--markdown-annotator-bg);
+  border: 1px solid var(--markdown-annotator-border);
+  border-radius: var(--markdown-annotator-radius-xl);
+  box-shadow: var(--markdown-annotator-shadow-lg);
+  padding: 20px;
+  z-index: 9999;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.annotation-float-window-title {
+  margin: 0 0 var(--markdown-annotator-spacing-md) 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--markdown-annotator-text-primary);
+}
+
+.annotation-float-editor-textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 2px solid var(--markdown-annotator-border);
+  border-radius: var(--markdown-annotator-radius-lg);
+  padding: 12px;
+  margin-bottom: var(--markdown-annotator-spacing-md);
+  resize: vertical;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+  outline: none;
+  transition: var(--markdown-annotator-transition);
+}
+
+.annotation-float-editor-textarea:focus {
+  border-color: var(--markdown-annotator-primary);
+  box-shadow: 0 0 0 3px var(--markdown-annotator-primary-light);
+}
+
+.annotation-float-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.annotation-float-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.annotation-float-button-cancel {
+  border: 1px solid var(--markdown-annotator-border);
+  background-color: var(--markdown-annotator-bg);
+  color: var(--markdown-annotator-text-tertiary);
+}
+
+.annotation-float-button-cancel:hover {
+  background-color: var(--markdown-annotator-bg-tertiary);
+  border-color: var(--markdown-annotator-border-hover);
+}
+
+.annotation-float-button-confirm {
+  border: none;
+  background: linear-gradient(135deg, var(--markdown-annotator-primary) 0%, var(--markdown-annotator-primary-hover) 100%);
+  color: white;
+  box-shadow: 0 2px 4px var(--markdown-annotator-primary-shadow);
+}
+
+.annotation-float-button-confirm:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--markdown-annotator-primary-hover) 0%, var(--markdown-annotator-primary-active) 100%);
+  box-shadow: 0 4px 8px var(--markdown-annotator-primary-shadow);
+}
+
+.annotation-float-button-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Temporary Selection Highlight */
+[data-temp-selection-id] {
+  background-color: rgba(255, 235, 59, 0.3) !important;
+  border-bottom: 2px solid #ffc107 !important;
+  cursor: pointer !important;
+}
+

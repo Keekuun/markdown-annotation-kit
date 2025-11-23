@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { injectMarkTags, stripMarkTags, ParsedMark } from "./utils/mark";
+import "./styles.css";
 
 export type AnnotationItem = { id: number; note: string };
 
@@ -65,6 +66,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
     if (annotations && annotations.length) {
       setAnn(annotations);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [annotations]);
 
   // 清理临时选中的 span
@@ -202,6 +204,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
     const onMouseUp = (event: MouseEvent) => handleSelection(event);
     document.addEventListener("mouseup", onMouseUp);
     return () => document.removeEventListener("mouseup", onMouseUp);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleSelection]);
 
   // 使用 split 方法通过上下文精确定位重复文本
@@ -332,7 +335,6 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
     // 如果上下文方法失败，尝试使用临时 span 方法
     if (!position && tempSelectionSpanRef.current) {
       const span = tempSelectionSpanRef.current;
-      const spanText = span.textContent || '';
       
       const walker = document.createTreeWalker(
         markdownRef.current,
@@ -438,6 +440,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
     setFloatWindow(s => ({ ...s, visible: false }));
     selectionRangeRef.current = null;
     selectionContextRef.current = null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [floatWindow.text, clean, ann, marks, rawMarkdown, parse.boundaryMap, isMarkdownControlled, onChange, isAnnControlled, onAnnotationsChange, getTextPositionByContext, cleanupTempSelection]);
 
   const anchorToHighlight = useCallback((idx: number) => {
@@ -465,34 +468,34 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
     if (isAnnControlled) onAnnotationsChange && onAnnotationsChange(next); else setAnn(next);
     setEditIndex(-1);
     setEditValue("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editValue, ann, isAnnControlled, onAnnotationsChange]);
 
   const deleteAnnotation = useCallback((idx: number) => {
     const item = ann[idx];
     if (!item) return;
     const id = item.id;
-    const re = new RegExp(`<mark_${id}>(.*?)<\/mark_${id}>`, "g");
+    const re = new RegExp(`<mark_${id}>(.*?)</mark_${id}>`, "g");
     const nextRaw = rawMarkdown.replace(re, "$1");
     if (isMarkdownControlled) onChange && onChange(nextRaw); else setRawMarkdown(nextRaw);
     const nextAnn = ann.filter((_, i) => i !== idx);
     if (isAnnControlled) onAnnotationsChange && onAnnotationsChange(nextAnn); else setAnn(nextAnn);
     delete highlightRefs.current[id];
     if (editIndex === idx) { setEditIndex(-1); setEditValue(""); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ann, rawMarkdown, isMarkdownControlled, onChange, isAnnControlled, onAnnotationsChange, editIndex]);
 
   return (
-    <div className={className} style={{ display: "flex", width: "100%", height: "100vh", overflow: "hidden", backgroundColor: "#fafafa" }}>
-      <div ref={markdownRef} style={{ flex: 1, padding: "40px", overflowY: "auto", backgroundColor: "white", maxWidth: "calc(100% - 320px)", boxShadow: "0 0 10px rgba(0,0,0,0.05)" }}>
+    <div className={`markdown-annotator-container ${className || ""}`}>
+      <div ref={markdownRef} className="markdown-annotator-content">
         <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{
           span: ({ className, children, ...props }) => {
             if (className === "annotation-highlight") {
-              const id = Number((props as any)["data-id"]);
+              const id = Number((props as { "data-id"?: string })["data-id"]);
               return (
                 <span
                   ref={el => (highlightRefs.current[id] = el)}
-                  style={{ textDecoration: "2px solid #2563eb underline", textUnderlineOffset: "4px", cursor: "pointer", transition: "background-color 0.2s", padding: "1px 0" }}
-                  onMouseEnter={e => { (e.target as HTMLElement).style.backgroundColor = "rgba(37, 99, 235, 0.1)"; }}
-                  onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = "transparent"; }}
+                  className="annotation-highlight"
                   onClick={() => {
                     const index = ann.findIndex(a => a.id === id);
                     if (index !== -1) {
@@ -511,45 +514,50 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
             }
             return <span {...props}>{children}</span>;
           },
-          h1: ({ children }) => <h1 style={{ fontSize: "28px", color: "#1f2937", margin: "24px 0 16px" }}>{children}</h1>,
-          h2: ({ children }) => <h2 style={{ fontSize: "24px", color: "#1f2937", margin: "20px 0 12px" }}>{children}</h2>,
-          p: ({ children }) => <p style={{ fontSize: "16px", color: "#374151", lineHeight: "1.6", margin: "8px 0" }}>{children}</p>,
-          li: ({ children }) => <li style={{ fontSize: "16px", color: "#374151", lineHeight: "1.6", margin: "4px 0" }}>{children}</li>
+          h1: ({ children }) => <h1>{children}</h1>,
+          h2: ({ children }) => <h2>{children}</h2>,
+          h3: ({ children }) => <h3>{children}</h3>,
+          p: ({ children }) => <p>{children}</p>,
+          li: ({ children }) => <li>{children}</li>
         }}>
           {contentWithHighlights}
         </ReactMarkdown>
       </div>
 
-      <div style={{ width: "320px", borderLeft: "1px solid #e5e7eb", padding: "20px", overflowY: "auto", backgroundColor: "#f9fafb" }}>
-        <div style={{ display: "flex", alignItems: "center", margin: "0 0 20px 0" }}>
-          <span style={{ width: "32px", height: "32px", borderRadius: "50%", backgroundColor: "#2563eb", color: "white", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", marginRight: "10px" }}>💡</span>
-          <h3 style={{ margin: "0", fontSize: "18px", color: "#1f2937" }}>文档批注</h3>
+      <div className="markdown-annotator-sidebar">
+        <div className="markdown-annotator-sidebar-header">
+          <div className="markdown-annotator-sidebar-icon">💡</div>
+          <h3 className="markdown-annotator-sidebar-title">文档批注</h3>
         </div>
         {ann.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "40px 20px", color: "#9ca3af", fontSize: "14px", lineHeight: "1.5" }}>暂无批注<br />选中文本添加批注吧～</div>
+          <div className="markdown-annotator-empty">
+            <div className="markdown-annotator-empty-icon">📝</div>
+            <div>暂无批注</div>
+            <div style={{ marginTop: "8px", fontSize: "12px" }}>选中文本添加批注吧～</div>
+          </div>
         ) : (
           ann.map((a, index) => (
-            <div key={a.id} id={`annotation-card-${index}`} style={{ border: "1px solid #e5e7eb", borderRadius: "6px", backgroundColor: "#f9fafb", padding: "12px 16px", marginBottom: "8px", transition: "all 0.2s", cursor: "pointer" }} onClick={() => anchorToHighlight(index)}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span style={{ width: "24px", height: "24px", borderRadius: "50%", backgroundColor: "#2563eb", color: "white", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center", marginRight: "8px" }}>{index + 1}</span>
-                  <span style={{ fontWeight: 600, fontSize: "14px" }}>批注 {index + 1}</span>
+            <div key={a.id} id={`annotation-card-${index}`} className="annotation-card" onClick={() => anchorToHighlight(index)}>
+              <div className="annotation-card-header">
+                <div className="annotation-card-badge">
+                  <span className="annotation-card-number">{index + 1}</span>
+                  <span className="annotation-card-label">批注 {index + 1}</span>
                 </div>
-                <div style={{ display: "flex", gap: "4px" }}>
-                  <button onClick={(e) => { e.stopPropagation(); handleEdit(index); }} style={{ padding: "4px 8px", border: "none", borderRadius: "4px", backgroundColor: "#f3f4f6", color: "#4b5563", cursor: "pointer", fontSize: "12px" }}>编辑</button>
-                  <button onClick={(e) => { e.stopPropagation(); deleteAnnotation(index); }} style={{ padding: "4px 8px", border: "none", borderRadius: "4px", backgroundColor: "#fee2e2", color: "#dc2626", cursor: "pointer", fontSize: "12px" }}>删除</button>
+                <div className="annotation-card-actions">
+                  <button className="annotation-card-button annotation-card-button-edit" onClick={(e) => { e.stopPropagation(); handleEdit(index); }}>编辑</button>
+                  <button className="annotation-card-button annotation-card-button-delete" onClick={(e) => { e.stopPropagation(); deleteAnnotation(index); }}>删除</button>
                 </div>
               </div>
               {editIndex === index ? (
-                <div>
-                  <textarea value={editValue} onChange={(e) => setEditValue(e.target.value)} style={{ width: "100%", height: "60px", border: "1px solid #2563eb", borderRadius: "4px", padding: "8px", marginBottom: "8px", resize: "none", fontSize: "13px" }} />
-                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
-                    <button onClick={(e) => { e.stopPropagation(); handleEdit(index, true); }} style={{ padding: "4px 8px", border: "1px solid #e5e7eb", borderRadius: "4px", backgroundColor: "white", cursor: "pointer", fontSize: "12px" }}>取消</button>
-                    <button onClick={(e) => { e.stopPropagation(); confirmEdit(index); }} style={{ padding: "4px 8px", border: "none", borderRadius: "4px", backgroundColor: "#2563eb", color: "white", cursor: "pointer", fontSize: "12px" }} disabled={!editValue.trim()}>确认</button>
+                <div className="annotation-card-edit-area">
+                  <textarea className="annotation-card-textarea" value={editValue} onChange={(e) => setEditValue(e.target.value)} />
+                  <div className="annotation-card-edit-actions">
+                    <button className="annotation-card-button-cancel" onClick={(e) => { e.stopPropagation(); handleEdit(index, true); }}>取消</button>
+                    <button className="annotation-card-button-confirm" onClick={(e) => { e.stopPropagation(); confirmEdit(index); }} disabled={!editValue.trim()}>确认</button>
                   </div>
                 </div>
               ) : (
-                <p style={{ margin: 0, fontSize: "13px", color: "#4b5563", lineHeight: "1.5" }}>{a.note}</p>
+                <p className="annotation-card-content">{a.note}</p>
               )}
             </div>
           ))
@@ -560,9 +568,10 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
         <div 
           ref={floatWindowRef}
           onMouseDown={(e) => e.stopPropagation()}
-          style={{ position: "absolute", left: floatWindow.x, top: floatWindow.y, width: "280px", backgroundColor: "white", border: "1px solid #e5e7eb", borderRadius: "8px", boxShadow: "0 4px 16px rgba(0,0,0,0.15)", padding: "16px", zIndex: 9999 }}
+          className="annotation-float-window"
+          style={{ left: floatWindow.x, top: floatWindow.y }}
         >
-          <div style={{ marginBottom: "12px", fontSize: "14px", fontWeight: 600, color: "#1f2937" }}>添加批注</div>
+          <div className="annotation-float-window-title">添加批注</div>
           <FloatEditor onConfirm={confirmAnnotation} onCancel={() => {
             cleanupTempSelection();
             setFloatWindow(s => ({ ...s, visible: false }));
@@ -579,10 +588,21 @@ function FloatEditor({ onConfirm, onCancel }: { onConfirm: (v: string) => void; 
   const [val, setVal] = useState("");
   return (
     <div>
-      <textarea value={val} onChange={e => setVal(e.target.value)} placeholder="输入你的批注内容..." style={{ width: "100%", height: "80px", border: "1px solid #e5e7eb", borderRadius: "4px", padding: "8px", marginBottom: "12px", resize: "none", fontSize: "14px", outline: "none" }} />
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
-        <button onClick={onCancel} style={{ padding: "6px 12px", border: "1px solid #e5e7eb", borderRadius: "4px", backgroundColor: "white", cursor: "pointer", fontSize: "14px" }}>取消</button>
-        <button onClick={() => { if (val.trim()) { onConfirm(val.trim()); setVal(""); } }} style={{ padding: "6px 12px", border: "none", borderRadius: "4px", backgroundColor: "#2563eb", color: "white", cursor: "pointer", fontSize: "14px" }} disabled={!val.trim()}>确认</button>
+      <textarea 
+        className="annotation-float-editor-textarea"
+        value={val} 
+        onChange={e => setVal(e.target.value)} 
+        placeholder="输入你的批注内容..." 
+      />
+      <div className="annotation-float-editor-actions">
+        <button className="annotation-float-button annotation-float-button-cancel" onClick={onCancel}>取消</button>
+        <button 
+          className="annotation-float-button annotation-float-button-confirm" 
+          onClick={() => { if (val.trim()) { onConfirm(val.trim()); setVal(""); } }} 
+          disabled={!val.trim()}
+        >
+          确认
+        </button>
       </div>
     </div>
   );

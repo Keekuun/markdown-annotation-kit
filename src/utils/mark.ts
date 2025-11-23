@@ -1,8 +1,10 @@
 export type ParsedMark = { id: number; start: number; end: number };
 
+export type BoundaryMap = number[];
+
 export type StripResult = {
   clean: string;
-  boundaryMap: number[];
+  boundaryMap: BoundaryMap;
   marks: ParsedMark[];
 };
 

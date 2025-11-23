@@ -1,9 +1,11 @@
 {
   "name": "markdown-annotation-kit",
   "version": "0.1.0",
-  "description": "React markdown annotation component library with mark tags and bidirectional anchors",
+  "description": "A production-ready React component for annotating Markdown documents with selection-based comments and bidirectional anchoring",
   "license": "MIT",
-  "author": "",
+  "author": {
+    "name": "Markdown Annotation Kit Contributors"
+  },
   "keywords": [
     "react",
     "markdown",
@@ -12,33 +14,57 @@
     "注释",
     "react-component",
     "typescript",
-    "documentation"
+    "documentation",
+    "comment",
+    "highlight",
+    "markdown-editor"
   ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/your-username/markdown-annotation-kit.git"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/your-username/markdown-annotation-kit/issues"
   },
-  "homepage": "",
+  "homepage": "https://github.com/your-username/markdown-annotation-kit#readme",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build": "tsup --config tsup.config.ts",
+    "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist",
-    "preview": "vite preview"
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist coverage",
+    "preview": "vite preview",
+    "prepublishOnly": "pnpm clean && pnpm build && pnpm typecheck && pnpm lint && pnpm test",
+    "validate": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test"
   },
   "peerDependencies": {
     "react": ">=17",
@@ -50,14 +76,29 @@
     "rehype-raw": "^7.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^1.0.4",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jsdom": "^23.0.1",
+    "prettier": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^8.0.1",
     "typescript": "^5.6.3",
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "vitest": "^1.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
