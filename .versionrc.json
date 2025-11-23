@@ -13,7 +13,8 @@
   ],
   "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
   "scripts": {
-    "postchangelog": "git add CHANGELOG.md package.json"
+    "postchangelog": "git add CHANGELOG.md package.json",
+    "posttag": "git push --follow-tags origin main"
   },
   "skip": {
     "tag": false

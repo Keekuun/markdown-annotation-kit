@@ -65,12 +65,12 @@
     "preview": "vite preview",
     "prepublishOnly": "pnpm clean && pnpm build && pnpm typecheck && pnpm lint && pnpm test",
     "validate": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test",
-    "release": "standard-version",
-    "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major",
-    "release:alpha": "standard-version --prerelease alpha",
-    "release:beta": "standard-version --prerelease beta",
-    "release:rc": "standard-version --prerelease rc"
+    "release": "standard-version && git push --follow-tags origin main",
+    "release:minor": "standard-version --release-as minor && git push --follow-tags origin main",
+    "release:major": "standard-version --release-as major && git push --follow-tags origin main",
+    "release:alpha": "standard-version --prerelease alpha && git push --follow-tags origin main",
+    "release:beta": "standard-version --prerelease beta && git push --follow-tags origin main",
+    "release:rc": "standard-version --prerelease rc && git push --follow-tags origin main"
   },
   "peerDependencies": {
     "react": ">=17",
