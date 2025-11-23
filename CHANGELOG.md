@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [0.3.2](https://github.com/Keekuun/markdown-annotation-kit/compare/v0.3.1...v0.3.2) (2025-11-23)
+
+
+### 🐛 Bug Fixes
+
+* fix code annotate ([2e11d83](https://github.com/Keekuun/markdown-annotation-kit/commit/2e11d838fc0942e025db298ecd2f1219ae8c2c2a))
+
 ### [0.3.1](https://github.com/Keekuun/markdown-annotation-kit/compare/v0.3.0...v0.3.1) (2025-11-23)
 
 
