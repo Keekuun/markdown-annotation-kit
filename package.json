@@ -74,7 +74,8 @@
     "prepare": "husky",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "package:zip": "zip -r markdown-annotation-kit.zip . -x 'node_modules/*' -x 'node_modules/**/*' -x 'dist/*' -x 'dist/**/*' -x 'coverage/*' -x 'coverage/**/*' -x '.git/*' -x '.git/**/*' -x '*.zip' -x '.DS_Store' -x '*.log' -x 'docs/.vitepress/dist/*' -x 'docs/.vitepress/dist/**/*'"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,json,md}": [
