@@ -10,12 +10,7 @@ describe("MarkdownAnnotator", () => {
 
   it("renders with default annotations", () => {
     const annotations = [{ id: 1, note: "Test annotation" }];
-    render(
-      <MarkdownAnnotator
-        defaultValue="Test content"
-        defaultAnnotations={annotations}
-      />
-    );
+    render(<MarkdownAnnotator defaultValue="Test content" defaultAnnotations={annotations} />);
     expect(screen.getByText("Test annotation")).toBeInTheDocument();
   });
 
@@ -26,4 +21,3 @@ describe("MarkdownAnnotator", () => {
     expect(container.querySelector(".custom-class")).toBeInTheDocument();
   });
 });
-

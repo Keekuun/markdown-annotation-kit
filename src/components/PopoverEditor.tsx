@@ -258,9 +258,7 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
               e.stopPropagation();
             }}
           >
-            {selectedText.length > 60
-              ? `${selectedText.slice(0, 60)}...`
-              : selectedText}
+            {selectedText.length > 60 ? `${selectedText.slice(0, 60)}...` : selectedText}
           </div>
 
           <div
@@ -303,33 +301,33 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
           </div>
 
           <div className="annotation-popover-footer">
-          <button
-            type="button"
-            className="annotation-popover-button annotation-popover-button-cancel"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              onCancel();
-            }}
-            onMouseDown={(e) => {
-              // 阻止事件冒泡，防止触发外部点击关闭逻辑
-              e.stopPropagation();
-            }}
-          >
-            取消
-          </button>
-          <button
-            type="button"
-            className="annotation-popover-button annotation-popover-button-confirm"
-            onClick={handleConfirm}
-            onMouseDown={(e) => {
-              // 阻止事件冒泡，防止触发外部点击关闭逻辑
-              e.stopPropagation();
-            }}
-            disabled={!note.trim()}
-          >
-            确认
-          </button>
+            <button
+              type="button"
+              className="annotation-popover-button annotation-popover-button-cancel"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onCancel();
+              }}
+              onMouseDown={(e) => {
+                // 阻止事件冒泡，防止触发外部点击关闭逻辑
+                e.stopPropagation();
+              }}
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              className="annotation-popover-button annotation-popover-button-confirm"
+              onClick={handleConfirm}
+              onMouseDown={(e) => {
+                // 阻止事件冒泡，防止触发外部点击关闭逻辑
+                e.stopPropagation();
+              }}
+              disabled={!note.trim()}
+            >
+              确认
+            </button>
           </div>
         </div>
       </div>,

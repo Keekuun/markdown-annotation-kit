@@ -128,8 +128,7 @@ export function useSelectionHandler({
       if (markdownRef.current.contains(range.commonAncestorContainer)) {
         // 检查是否在已标记区域内
         const checkIfInMarkedArea = (node: Node): boolean => {
-          let parent =
-            node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as Element);
+          let parent = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as Element);
           while (parent && parent !== markdownRef.current) {
             if (parent.classList && parent.classList.contains("annotation-highlight")) {
               return true;
@@ -139,10 +138,7 @@ export function useSelectionHandler({
           return false;
         };
 
-        if (
-          checkIfInMarkedArea(range.startContainer) ||
-          checkIfInMarkedArea(range.endContainer)
-        ) {
+        if (checkIfInMarkedArea(range.startContainer) || checkIfInMarkedArea(range.endContainer)) {
           return;
         }
 
@@ -197,7 +193,15 @@ export function useSelectionHandler({
         setSelection((s) => ({ ...s, visible: false }));
       }
     },
-    [markdownRef, popoverRef, selection.visible, cleanupTempSelection, getSelectionContext, onSelection, setSelection]
+    [
+      markdownRef,
+      popoverRef,
+      selection.visible,
+      cleanupTempSelection,
+      getSelectionContext,
+      onSelection,
+      setSelection,
+    ]
   );
 
   return {
@@ -209,4 +213,3 @@ export function useSelectionHandler({
     tempSelectionSpanRef,
   };
 }
-

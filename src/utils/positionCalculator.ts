@@ -1,4 +1,3 @@
-
 /**
  * 使用 split 方法通过上下文精确定位重复文本
  * 这是简单粗暴但有效的方法：通过前后文本来唯一确定位置
@@ -85,10 +84,7 @@ export function getTextPositionByContext(
     }
 
     // 如果前后文都完全匹配，直接返回
-    if (
-      beforeScore === normalizedBefore.length &&
-      afterScore === normalizedAfter.length
-    ) {
+    if (beforeScore === normalizedBefore.length && afterScore === normalizedAfter.length) {
       return { start, end };
     }
 
@@ -122,8 +118,7 @@ export function getTextPositionByContext(
 
     // 如果前后文都有一定匹配，或者只有一个匹配位置，返回它
     if (
-      (bestMatch.beforeScore >= minBeforeScore &&
-        bestMatch.afterScore >= minAfterScore) ||
+      (bestMatch.beforeScore >= minBeforeScore && bestMatch.afterScore >= minAfterScore) ||
       (bestMatch.beforeScore > 0 && bestMatch.afterScore > 0) ||
       parts.length === 2
     ) {
@@ -133,4 +128,3 @@ export function getTextPositionByContext(
 
   return null;
 }
-

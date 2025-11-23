@@ -91,4 +91,3 @@ export function AnnotationCard({
     </div>
   );
 }
-

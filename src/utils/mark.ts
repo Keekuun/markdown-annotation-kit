@@ -38,7 +38,7 @@ export function stripMarkTags(raw: string): StripResult {
         }
         if (raw[j] === ">") {
           const id = Number(num);
-          const openIndex = stack.findIndex(s => s.id === id);
+          const openIndex = stack.findIndex((s) => s.id === id);
           if (openIndex !== -1) {
             const open = stack[openIndex];
             marks.push({ id, start: open.start, end: clean.length });
@@ -67,14 +67,14 @@ export function injectMarkTags(
   // boundaryMap[i] 表示 clean markdown 中第 i 个字符在 raw markdown 中的位置
   let startRaw: number;
   let endRaw: number;
-  
+
   if (startClean < boundaryMap.length) {
     startRaw = boundaryMap[startClean];
   } else {
     // 如果超出范围，使用 raw 的末尾
     startRaw = raw.length;
   }
-  
+
   if (endClean <= boundaryMap.length) {
     if (endClean === 0) {
       endRaw = 0;
@@ -88,12 +88,12 @@ export function injectMarkTags(
   } else {
     endRaw = raw.length;
   }
-  
+
   // 确保 endRaw >= startRaw
   if (endRaw < startRaw) {
     endRaw = startRaw;
   }
-  
+
   const left = raw.slice(0, startRaw);
   const mid = raw.slice(startRaw, endRaw);
   const right = raw.slice(endRaw);

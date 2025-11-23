@@ -109,11 +109,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
       if (!position && tempSelectionSpanRef.current && markdownRef.current) {
         const span = tempSelectionSpanRef.current;
 
-        const walker = document.createTreeWalker(
-          markdownRef.current,
-          NodeFilter.SHOW_TEXT,
-          null
-        );
+        const walker = document.createTreeWalker(markdownRef.current, NodeFilter.SHOW_TEXT, null);
 
         let textOffset = 0;
         let startOffset = -1;
@@ -167,13 +163,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
       const { start, end } = position;
 
       // 验证位置是否在有效范围内
-      if (
-        start < 0 ||
-        end < 0 ||
-        start >= end ||
-        start > clean.length ||
-        end > clean.length
-      ) {
+      if (start < 0 || end < 0 || start >= end || start > clean.length || end > clean.length) {
         console.error("Invalid position:", { start, end, cleanLength: clean.length });
         cleanupTempSelection();
         setSelection({ visible: false, x: 0, y: 0, height: 0, text: "" });
@@ -188,10 +178,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
         positionText !== selectedText &&
         positionText.trim() !== selectedText.trim() &&
         normalizedPosition !== normalizedSelected &&
-        !(
-          normalizedPosition.length === normalizedSelected.length &&
-          normalizedPosition.length > 0
-        )
+        !(normalizedPosition.length === normalizedSelected.length && normalizedPosition.length > 0)
       ) {
         console.error("Position text mismatch:", {
           positionText,
@@ -207,11 +194,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
       }
 
       const maxId = ann.length ? Math.max(...ann.map((a) => a.id)) : 0;
-      const newId =
-        Math.max(
-          maxId,
-          marks.length ? Math.max(...marks.map((m) => m.id)) : 0
-        ) + 1;
+      const newId = Math.max(maxId, marks.length ? Math.max(...marks.map((m) => m.id)) : 0) + 1;
       const nextRaw = injectMarkTags(rawMarkdown, parse.boundaryMap, start, end, newId);
 
       if (isMarkdownControlled) onChange && onChange(nextRaw);
@@ -336,8 +319,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
           cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
           (cardEl as HTMLElement).style.borderColor = "#2563eb";
           setTimeout(() => {
-            (cardEl as HTMLElement).style.borderColor =
-              editIndex === index ? "#2563eb" : "#e5e7eb";
+            (cardEl as HTMLElement).style.borderColor = editIndex === index ? "#2563eb" : "#e5e7eb";
           }, 1000);
         }
       }
