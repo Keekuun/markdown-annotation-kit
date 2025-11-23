@@ -124,64 +124,171 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
       const spaceAbove = selectionTop - containerRect.top - 16;
       const spaceBelow = containerRect.top + containerRect.height - selectionBottom - 16;
 
-      // 默认位置：选中文本上方
+      // 计算理想位置：优先放在上方，确保不遮挡选中文本
       let top: number;
       let placement: "top" | "bottom" = "top";
 
-      // 判断放在上方还是下方
-      // 如果上方空间足够（至少能放下弹窗），优先放在上方
-      // 如果上方空间不足，放在下方
-      if (spaceAbove >= POPOVER_HEIGHT + GAP + ARROW_SIZE) {
-        // 放在上方
-        top = selectionTop - POPOVER_HEIGHT - GAP - ARROW_SIZE;
+      // 计算上方理想位置：弹窗底部应该在选中文本顶部上方，留出足够的空间
+      // 弹窗底部 = top + POPOVER_HEIGHT
+      // 箭头从弹窗底部向下延伸 ARROW_SIZE (8px)
+      // 箭头底部 = top + POPOVER_HEIGHT + ARROW_SIZE
+      // 选中文本顶部 = selectionTop
+      // 需要：箭头底部到选中文本顶部有足够的间距（100px）
+      // 所以：top + POPOVER_HEIGHT + ARROW_SIZE <= selectionTop - LARGE_GAP
+      // 即：top <= selectionTop - POPOVER_HEIGHT - ARROW_SIZE - LARGE_GAP
+      const LARGE_GAP = 100; // 弹窗在上方时，箭头底部到选中文本的间距
+      const idealTopAbove = selectionTop - POPOVER_HEIGHT - ARROW_SIZE - LARGE_GAP;
+      const minTop = containerRect.top + 16;
+      const maxTop = containerRect.top + containerRect.height - POPOVER_HEIGHT - 16;
+
+      // 计算下方理想位置：弹窗顶部应该在选中文本底部下方，留出足够的空间
+      // 弹窗顶部 = top
+      // 选中文本底部 = selectionBottom
+      // 需要：top >= selectionBottom + GAP
+      const idealTopBelow = selectionBottom + GAP + ARROW_SIZE;
+
+      // 判断是否可以放在上方（不遮挡文本且不超出边界）
+      // 确保箭头底部（top + POPOVER_HEIGHT + ARROW_SIZE）不高于选中文本顶部（selectionTop - LARGE_GAP）
+      const canPlaceAbove =
+        idealTopAbove >= minTop &&
+        idealTopAbove <= maxTop &&
+        idealTopAbove + POPOVER_HEIGHT + ARROW_SIZE <= selectionTop - LARGE_GAP;
+
+      // 判断是否可以放在下方（不遮挡文本且不超出边界）
+      const canPlaceBelow =
+        idealTopBelow >= minTop &&
+        idealTopBelow <= maxTop &&
+        idealTopBelow >= selectionBottom + GAP;
+
+      if (canPlaceAbove) {
+        // 可以放在上方，优先选择
+        top = idealTopAbove;
         placement = "top";
-      } else if (spaceBelow >= POPOVER_HEIGHT + GAP + ARROW_SIZE) {
-        // 放在下方
-        top = selectionBottom + GAP + ARROW_SIZE;
+      } else if (canPlaceBelow) {
+        // 可以放在下方
+        top = idealTopBelow;
         placement = "bottom";
       } else {
-        // 如果上下空间都不足，选择空间更大的一侧
+        // 上下都不理想，选择相对更好的位置
         if (spaceAbove > spaceBelow) {
-          // 放在上方，但可能需要调整位置
-          top = Math.max(containerRect.top + 16, selectionTop - POPOVER_HEIGHT - GAP - ARROW_SIZE);
+          // 尝试放在上方，但确保不遮挡文本
+          top = Math.max(minTop, Math.min(maxTop, idealTopAbove));
           placement = "top";
+          // 如果会遮挡文本，强制调整
+          if (top + POPOVER_HEIGHT > selectionTop - GAP) {
+            // 上方会遮挡，改为下方
+            top = Math.max(minTop, Math.min(maxTop, idealTopBelow));
+            placement = "bottom";
+            // 如果下方也会遮挡，至少保证最小间距
+            if (top < selectionBottom + GAP) {
+              top = selectionBottom + GAP;
+            }
+          }
         } else {
-          // 放在下方，但可能需要调整位置
-          top = Math.min(
-            containerRect.top + containerRect.height - POPOVER_HEIGHT - 16,
-            selectionBottom + GAP + ARROW_SIZE
-          );
+          // 放在下方
+          top = Math.max(minTop, Math.min(maxTop, idealTopBelow));
           placement = "bottom";
+          // 如果会遮挡文本，强制调整
+          if (top < selectionBottom + GAP) {
+            top = selectionBottom + GAP;
+          }
         }
       }
 
-      // 确保不超出容器
-      if (top < containerRect.top + 16) {
-        top = containerRect.top + 16;
-      }
-      if (top + POPOVER_HEIGHT > containerRect.top + containerRect.height - 16) {
-        top = containerRect.top + containerRect.height - POPOVER_HEIGHT - 16;
+      // 最终验证：确保不遮挡选中文本
+      if (placement === "top") {
+        // 弹窗在上方：确保箭头底部（top + POPOVER_HEIGHT + ARROW_SIZE）不高于选中文本顶部（留出 LARGE_GAP 空间）
+        const arrowBottom = top + POPOVER_HEIGHT + ARROW_SIZE;
+        if (arrowBottom > selectionTop - LARGE_GAP) {
+          // 会遮挡文本，改为下方
+          top = Math.max(idealTopBelow, selectionBottom + GAP);
+          placement = "bottom";
+        }
+      } else {
+        // 弹窗在下方：确保弹窗顶部不低于选中文本底部（留出 GAP 空间）
+        if (top < selectionBottom + GAP) {
+          top = selectionBottom + GAP;
+        }
       }
 
-      // 水平居中，但确保不超出容器
-      let left = position.x - POPOVER_WIDTH / 2;
+      // 最终边界检查：确保不超出容器（但不能以遮挡文本为代价）
+      if (top < minTop) {
+        // 如果上方空间不足，尝试下方
+        if (placement === "top" && idealTopBelow >= minTop && idealTopBelow <= maxTop) {
+          top = idealTopBelow;
+          placement = "bottom";
+        } else {
+          top = minTop;
+        }
+      }
+
+      if (top + POPOVER_HEIGHT > maxTop + 16) {
+        // 如果下方空间不足，尝试上方
+        if (placement === "bottom" && idealTopAbove >= minTop && idealTopAbove <= maxTop) {
+          top = idealTopAbove;
+          placement = "top";
+          // 再次验证不遮挡文本
+          if (top + POPOVER_HEIGHT + ARROW_SIZE > selectionTop - LARGE_GAP) {
+            // 仍然会遮挡，保持在下方但调整位置
+            top = Math.max(minTop, selectionBottom + GAP);
+            placement = "bottom";
+          }
+        } else {
+          top = maxTop;
+        }
+      }
+
+      // 水平定位：优先让箭头准确指向选中文本
+      // position.x 是选中文本中心的视口坐标
+      const selectionCenterX = position.x;
+      const ARROW_MIN_MARGIN = 12; // 箭头到弹窗边缘的最小距离
+
+      // 理想情况下，弹窗应该居中于选中文本
+      // 但如果选中文本靠近边缘，我们需要调整弹窗位置，确保箭头能够指向选中文本
+      let left = selectionCenterX - POPOVER_WIDTH / 2;
       const minLeft = containerRect.left + 16;
       const maxLeft = containerRect.left + containerRect.width - POPOVER_WIDTH - 16;
 
-      if (left < minLeft) {
-        left = minLeft;
-      } else if (left > maxLeft) {
-        left = maxLeft;
+      // 如果弹窗需要调整位置（因为边界限制），我们需要确保箭头仍然能够指向选中文本
+      // 计算箭头在弹窗内的理想位置
+      const idealArrowLeft = selectionCenterX - left;
+
+      // 如果理想箭头位置超出限制，调整弹窗位置以容纳箭头
+      if (idealArrowLeft < ARROW_MIN_MARGIN) {
+        // 箭头太靠左，调整弹窗向右移动
+        left = selectionCenterX - ARROW_MIN_MARGIN;
+        if (left < minLeft) {
+          left = minLeft;
+        }
+      } else if (idealArrowLeft > POPOVER_WIDTH - ARROW_MIN_MARGIN) {
+        // 箭头太靠右，调整弹窗向左移动
+        left = selectionCenterX - (POPOVER_WIDTH - ARROW_MIN_MARGIN);
+        if (left > maxLeft) {
+          left = maxLeft;
+        }
+      } else {
+        // 箭头位置在合理范围内，但弹窗可能因为边界限制需要调整
+        if (left < minLeft) {
+          left = minLeft;
+        } else if (left > maxLeft) {
+          left = maxLeft;
+        }
       }
 
-      // 计算箭头位置（相对于选中文本中心）
-      const arrowLeft = position.x - left;
+      // 重新计算箭头位置（基于调整后的弹窗位置）
+      const arrowLeft = selectionCenterX - left;
+
+      // 限制箭头位置，确保不会超出弹窗边界
+      const clampedArrowLeft = Math.max(
+        ARROW_MIN_MARGIN,
+        Math.min(POPOVER_WIDTH - ARROW_MIN_MARGIN, arrowLeft)
+      );
 
       return {
         top: `${top}px`,
         left: `${left}px`,
         placement,
-        arrowLeft: `${Math.max(20, Math.min(POPOVER_WIDTH - 20, arrowLeft))}px`,
+        arrowLeft: `${clampedArrowLeft}px`,
       };
     }, [visible, position, portalContainer]);
 
