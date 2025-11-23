@@ -6,7 +6,9 @@ export default defineConfig({
   title: "Markdown Annotation Kit",
   description:
     "A production-ready React component for annotating Markdown documents with selection-based comments and bidirectional anchoring",
-  base: "/markdown-annotation-kit/",
+  // 如果部署到 Vercel 自定义域名，使用 "/"
+  // 如果部署到 GitHub Pages，使用 "/markdown-annotation-kit/"
+  base: process.env.VERCEL ? "/" : "/markdown-annotation-kit/",
   lang: "zh-CN",
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }],
