@@ -16,27 +16,87 @@ export function stripMarkTags(raw: string): StripResult {
   const len = raw.length;
   const stack: { id: number; start: number }[] = [];
 
+  // 跟踪是否在代码块中（``` 或 ```language）
+  let inCodeBlock = false;
+
+  // 跟踪是否在行内代码中（`）
+  let inInlineCode = false;
+
   while (i < len) {
+    // 检查代码块开始/结束（```）
+    if (raw.startsWith("```", i)) {
+      // 检查是否是代码块标记（前面是换行或字符串开始，后面是换行、空格、字母数字或字符串结束）
+      const beforeIsNewlineOrStart = i === 0 || raw[i - 1] === "\n" || raw[i - 1] === "\r";
+      const afterChar = i + 3 < len ? raw[i + 3] : "";
+      const isCodeBlockMarker =
+        beforeIsNewlineOrStart &&
+        (afterChar === "\n" ||
+          afterChar === "\r" ||
+          afterChar === "" ||
+          /[a-zA-Z0-9\s]/.test(afterChar));
+
+      if (isCodeBlockMarker) {
+        inCodeBlock = !inCodeBlock;
+        // 将代码块标记作为普通文本处理
+        // 处理完整的 ``` 标记（3个字符）
+        for (let k = 0; k < 3 && i < len; k++) {
+          boundaryMap.push(i);
+          clean += raw[i];
+          i += 1;
+        }
+        continue;
+      }
+    }
+
+    // 检查行内代码（`），但不在代码块中
+    if (!inCodeBlock && raw[i] === "`") {
+      // 检查前后是否有其他字符（不是 ```）
+      const prevChars = i >= 2 ? raw.slice(i - 2, i) : "";
+      const nextChars = i + 3 <= len ? raw.slice(i + 1, i + 3) : "";
+      // 简单的行内代码检测：不是 ``` 的一部分
+      if (prevChars !== "``" && nextChars !== "``") {
+        inInlineCode = !inInlineCode;
+      }
+    }
+
+    // 如果在代码块或行内代码中，不解析 mark 标签，直接作为普通文本
+    if (inCodeBlock || inInlineCode) {
+      boundaryMap.push(i);
+      clean += raw[i];
+      i += 1;
+      continue;
+    }
+
+    // 不在代码块中，正常解析 mark 标签
+    // 注意：即使不在代码块中，也要检查是否是 mark 标签
     if (raw[i] === "<") {
+      // 检查是否是 mark 标签开始
       if (raw.startsWith("<mark_", i)) {
         let j = i + 6;
         let num = "";
+        // 读取数字 ID
         while (j < len && /[0-9]/.test(raw[j])) {
           num += raw[j++];
         }
-        if (raw[j] === ">") {
+        // 检查是否是完整的 mark 标签（以 > 结尾）
+        if (j < len && raw[j] === ">") {
           const id = Number(num);
           stack.push({ id, start: clean.length });
+          // 跳过整个 <mark_id> 标签
           i = j + 1;
           continue;
         }
+        // 如果不是完整的 mark 标签，当作普通文本处理
       } else if (raw.startsWith("</mark_", i)) {
+        // 检查是否是 mark 标签结束
         let j = i + 7;
         let num = "";
+        // 读取数字 ID
         while (j < len && /[0-9]/.test(raw[j])) {
           num += raw[j++];
         }
-        if (raw[j] === ">") {
+        // 检查是否是完整的 mark 标签（以 > 结尾）
+        if (j < len && raw[j] === ">") {
           const id = Number(num);
           const openIndex = stack.findIndex((s) => s.id === id);
           if (openIndex !== -1) {
@@ -44,9 +104,11 @@ export function stripMarkTags(raw: string): StripResult {
             marks.push({ id, start: open.start, end: clean.length });
             stack.splice(openIndex, 1);
           }
+          // 跳过整个 </mark_id> 标签
           i = j + 1;
           continue;
         }
+        // 如果不是完整的 mark 标签，当作普通文本处理
       }
     }
     boundaryMap.push(i);

@@ -11,17 +11,31 @@ interface HighlightedMarkdownProps {
 }
 
 function buildHighlighted(clean: string, marks: ParsedMark[]): string {
-  if (marks.length === 0) return clean;
+  // 先清理 clean 中可能残留的未解析的 mark 标签（作为安全措施）
+  // 这可以防止代码块检测逻辑有问题时，mark 标签被当作普通文本显示
+  const sanitizedClean = clean.replace(/<mark_\d+>/g, "").replace(/<\/mark_\d+>/g, "");
+
+  if (marks.length === 0) return sanitizedClean;
   let out = "";
   let cursor = 0;
   for (const m of marks) {
-    out += clean.slice(cursor, m.start);
+    // 确保 mark 的位置在有效范围内
+    if (
+      m.start < 0 ||
+      m.end < 0 ||
+      m.start >= m.end ||
+      m.start > sanitizedClean.length ||
+      m.end > sanitizedClean.length
+    ) {
+      continue;
+    }
+    out += sanitizedClean.slice(cursor, m.start);
     out += `<span class="annotation-highlight" data-id="${m.id}">`;
-    out += clean.slice(m.start, m.end);
+    out += sanitizedClean.slice(m.start, m.end);
     out += "</span>";
     cursor = m.end;
   }
-  out += clean.slice(cursor);
+  out += sanitizedClean.slice(cursor);
   return out;
 }
 
