@@ -59,16 +59,8 @@ export function stripMarkTags(raw: string): StripResult {
       }
     }
 
-    // 如果在代码块或行内代码中，不解析 mark 标签，直接作为普通文本
-    if (inCodeBlock || inInlineCode) {
-      boundaryMap.push(i);
-      clean += raw[i];
-      i += 1;
-      continue;
-    }
-
-    // 不在代码块中，正常解析 mark 标签
-    // 注意：即使不在代码块中，也要检查是否是 mark 标签
+    // 检查 mark 标签（无论在代码块中还是不在）
+    // 注意：即使在代码块中，我们也需要解析 mark 标签，以便后续在 DOM 中高亮显示
     if (raw[i] === "<") {
       // 检查是否是 mark 标签开始
       if (raw.startsWith("<mark_", i)) {
@@ -111,6 +103,17 @@ export function stripMarkTags(raw: string): StripResult {
         // 如果不是完整的 mark 标签，当作普通文本处理
       }
     }
+
+    // 如果在行内代码中，不解析其他内容，直接作为普通文本
+    // 注意：代码块中的内容也需要保留，但 mark 标签已经被解析了
+    if (inInlineCode && raw[i] !== "<") {
+      boundaryMap.push(i);
+      clean += raw[i];
+      i += 1;
+      continue;
+    }
+
+    // 其他情况（包括代码块中的普通文本），正常处理
     boundaryMap.push(i);
     clean += raw[i];
     i += 1;

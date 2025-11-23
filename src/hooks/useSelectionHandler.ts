@@ -126,27 +126,6 @@ export function useSelectionHandler({
       }
 
       if (markdownRef.current.contains(range.commonAncestorContainer)) {
-        // 检查是否在代码块中（pre 或 code 元素）
-        const checkIfInCodeBlock = (node: Node): boolean => {
-          let parent = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as Element);
-          while (parent && parent !== markdownRef.current) {
-            if (parent.tagName === "PRE" || parent.tagName === "CODE") {
-              return true;
-            }
-            parent = parent.parentElement;
-          }
-          return false;
-        };
-
-        // 如果选择在代码块中，不允许标注
-        if (
-          checkIfInCodeBlock(range.startContainer) ||
-          checkIfInCodeBlock(range.endContainer) ||
-          checkIfInCodeBlock(range.commonAncestorContainer)
-        ) {
-          return;
-        }
-
         // 检查是否在已标记区域内
         const checkIfInMarkedArea = (node: Node): boolean => {
           let parent = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as Element);
