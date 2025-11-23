@@ -1,0 +1,22 @@
+文档批注功能 
+任务要求： 实现基于markdown数据的文档批注功能。支持用户随意选取，选取后在选区上方展开交互浮窗。浮窗中可以输入批注，点击“确认”按钮后，页面上以下划线标识选区内容，数据中在选区内容前后插入<mark_N></mark_N>标签。批注以卡片形式排列在侧边，支持双向锚定。 N 为序号。 需要支持源数据中<mark_N>的回显。
+输入示例：
+Emphasis
+This is bold text
+This is bold text
+This is italic text
+This is italic text
+~~Strikethrough~~
+Blockquotes
+Blockquotes can also be nested...
+...by using additional greater-than signs right next to each other...
+...or with spaces between arrows.
+Ordered
+Lorem ipsum dolor sit amet
+Consectetur adipiscing elit
+Integer molestie lorem at massa
+You can use sequential numbers...
+...or keep all the numbers as 1.
+Start numbering with offset:
+foo
+bar

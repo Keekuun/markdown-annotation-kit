@@ -1,0 +1,63 @@
+{
+  "name": "markdown-annotation-kit",
+  "version": "0.1.0",
+  "description": "React markdown annotation component library with mark tags and bidirectional anchors",
+  "license": "MIT",
+  "author": "",
+  "keywords": [
+    "react",
+    "markdown",
+    "annotation",
+    "批注",
+    "注释",
+    "react-component",
+    "typescript",
+    "documentation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "dependencies": {
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0",
+    "rehype-raw": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.0.0"
+  }
+}
