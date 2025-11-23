@@ -19,7 +19,7 @@ This project adheres to a code of conduct that all contributors are expected to 
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/your-username/markdown-annotation-kit.git
+   git clone https://github.com/Keekuun/markdown-annotation-kit.git
    cd markdown-annotation-kit
    ```
 3. Install dependencies:
@@ -97,20 +97,25 @@ pnpm validate
 
 Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-- `feat:` - A new feature
-- `fix:` - A bug fix
+- `feat:` - A new feature (minor version bump)
+- `fix:` - A bug fix (patch version bump)
+- `feat!:` or `fix!:` - Breaking changes (major version bump)
 - `docs:` - Documentation changes
 - `style:` - Code style changes (formatting, etc.)
 - `refactor:` - Code refactoring
 - `test:` - Adding or updating tests
 - `chore:` - Maintenance tasks
+- `perf:` - Performance improvements
 
 Examples:
 ```
 feat: add support for custom annotation colors
 fix: resolve duplicate text annotation bug
+feat!: change API structure for annotations
 docs: update API documentation
 ```
+
+**重要**：遵循 Conventional Commits 规范可以让 `standard-version` 自动确定版本号类型。
 
 ### Pull Request Process
 

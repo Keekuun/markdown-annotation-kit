@@ -6,7 +6,7 @@
 ![npm downloads](https://img.shields.io/npm/dm/markdown-annotation-kit?style=flat-square)
 ![License](https://img.shields.io/npm/l/markdown-annotation-kit?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue?style=flat-square&logo=typescript)
-![CI](https://img.shields.io/github/workflow/status/your-username/markdown-annotation-kit/CI?style=flat-square)
+![CI](https://img.shields.io/github/workflow/status/Keekuun/markdown-annotation-kit/CI?style=flat-square)
 
 **A production-ready React component for annotating Markdown documents with selection-based comments and bidirectional anchoring.**
 
@@ -220,7 +220,7 @@ function App() {
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/markdown-annotation-kit.git
+git clone https://github.com/Keekuun/markdown-annotation-kit.git
 cd markdown-annotation-kit
 
 # Install dependencies
@@ -242,6 +242,12 @@ pnpm dev
 - `pnpm format` - Format code
 - `pnpm typecheck` - Type check
 - `pnpm validate` - Run all checks (typecheck, lint, format, test)
+- `pnpm release` - Release new version (auto-update version, CHANGELOG, and create tag)
+  - `pnpm release:minor` - Release minor version
+  - `pnpm release:major` - Release major version
+  - `pnpm release:alpha` - Release alpha pre-release
+  - `pnpm release:beta` - Release beta pre-release
+  - `pnpm release:rc` - Release rc pre-release
 
 ## 🤝 Contributing
 
@@ -258,9 +264,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📮 Support
 
-- 🐛 [Report a bug](https://github.com/your-username/markdown-annotation-kit/issues)
-- 💡 [Request a feature](https://github.com/your-username/markdown-annotation-kit/issues)
-- 📖 [Read the documentation](https://github.com/your-username/markdown-annotation-kit#readme)
+- 🐛 [Report a bug](https://github.com/Keekuun/markdown-annotation-kit/issues)
+- 💡 [Request a feature](https://github.com/Keekuun/markdown-annotation-kit/issues)
+- 📖 [Read the documentation](https://github.com/Keekuun/markdown-annotation-kit#readme)
 
 ---
 
