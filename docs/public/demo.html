@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Markdown Annotation Kit - 交互式演示</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #root {
+        height: 100vh;
+      }
+      .demo-container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .demo-header {
+        padding: 12px 16px;
+        background: #f5f5f5;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+        color: #666;
+      }
+      .demo-content {
+        flex: 1;
+        min-height: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useState, useMemo, useCallback } = React;
+
+      const DEFAULT_MARKDOWN = `# Markdown 文档批注示例
+
+## 功能特性
+
+这是一个功能强大的 Markdown 批注组件，支持以下特性：
+
+- **文本选择批注** - 选中任意文本即可添加批注
+- **双向锚定** - 点击批注卡片定位到原文，点击高亮文本定位到批注
+- **标签系统** - 使用 \`<mark_N></mark_N>\` 标签持久化批注数据
+- **标签回显** - 自动识别并回显已保存的批注标签
+
+> 这个组件是用来在 Markdown 文档中添加批注功能的。
+
+> 你可以选中任意文本，在弹出的浮窗中输入批注内容，点击确认即可。
+
+> 你可以点击批注卡片定位到原文，点击高亮文本定位到批注。
+
+## 使用说明
+
+1. **添加批注**：选中任意文本，在弹出的浮窗中输入批注内容，点击确认即可。
+
+2. **查看批注**：侧边栏会显示所有批注卡片，点击卡片可以定位到原文位置。
+
+3. **编辑批注**：点击批注卡片上的"编辑"按钮，修改批注内容。
+
+4. **删除批注**：点击批注卡片上的"删除"按钮，移除批注。
+
+## 代码示例
+
+\`\`\`typescript
+import { MarkdownAnnotator } from 'markdown-annotation-kit';
+
+function App() {
+  return (
+    <MarkdownAnnotator
+      defaultValue="# 标题\\n\\n这是内容。"
+    />
+  );
+}
+\`\`\`
+
+## 更多信息
+
+查看文档了解更多使用方法和 API 文档。`;
+
+      function Demo() {
+        return (
+          <div className="demo-container">
+            <div className="demo-header">
+              💡 提示：选中下方文本即可添加批注，点击高亮文本可跳转到批注
+            </div>
+            <div className="demo-content">
+              <iframe
+                src="/markdown-annotation-kit/demo-iframe.html"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                }}
+                title="Markdown Annotation Demo"
+              />
+            </div>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<Demo />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
+

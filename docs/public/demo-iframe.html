@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Markdown Annotation Kit - 演示</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/markdown-annotation-kit@latest/dist/styles.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #root {
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      // 注意：这里需要从 CDN 加载组件，或者使用构建后的版本
+      // 为了演示，我们使用一个简化的实现
+      // 实际使用时应该从 npm 包加载
+      
+      const DEFAULT_MARKDOWN = `# Markdown 文档批注示例
+
+## 功能特性
+
+这是一个功能强大的 Markdown 批注组件，支持以下特性：
+
+- **文本选择批注** - 选中任意文本即可添加批注
+- **双向锚定** - 点击批注卡片定位到原文，点击高亮文本定位到批注
+- **标签系统** - 使用 \`<mark_N></mark_N>\` 标签持久化批注数据
+- **标签回显** - 自动识别并回显已保存的批注标签
+
+> 这个组件是用来在 Markdown 文档中添加批注功能的。
+
+> 你可以选中任意文本，在弹出的浮窗中输入批注内容，点击确认即可。
+
+> 你可以点击批注卡片定位到原文，点击高亮文本定位到批注。
+
+## 使用说明
+
+1. **添加批注**：选中任意文本，在弹出的浮窗中输入批注内容，点击确认即可。
+
+2. **查看批注**：侧边栏会显示所有批注卡片，点击卡片可以定位到原文位置。
+
+3. **编辑批注**：点击批注卡片上的"编辑"按钮，修改批注内容。
+
+4. **删除批注**：点击批注卡片上的"删除"按钮，移除批注。
+
+## 代码示例
+
+\`\`\`typescript
+import { MarkdownAnnotator } from 'markdown-annotation-kit';
+
+function App() {
+  return (
+    <MarkdownAnnotator
+      defaultValue="# 标题\\n\\n这是内容。"
+    />
+  );
+}
+\`\`\`
+
+## 更多信息
+
+查看文档了解更多使用方法和 API 文档。`;
+
+      function Demo() {
+        // 这里应该使用实际的 MarkdownAnnotator 组件
+        // 但由于是在静态 HTML 中，我们需要提供一个说明
+        return (
+          <div style={{ 
+            height: '100vh', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            flexDirection: 'column',
+            padding: '20px',
+            textAlign: 'center',
+            background: '#f5f5f5'
+          }}>
+            <h2 style={{ marginBottom: '20px', color: '#333' }}>
+              Markdown Annotation Kit 演示
+            </h2>
+            <p style={{ marginBottom: '20px', color: '#666', maxWidth: '600px' }}>
+              要查看完整的交互式演示，请访问开发环境：
+            </p>
+            <a 
+              href="http://localhost:5173" 
+              target="_blank"
+              style={{
+                display: 'inline-block',
+                padding: '12px 24px',
+                background: '#2563eb',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '6px',
+                fontWeight: '500'
+              }}
+            >
+              打开开发演示
+            </a>
+            <p style={{ marginTop: '20px', color: '#999', fontSize: '14px' }}>
+              运行 <code style={{ background: '#e5e7eb', padding: '2px 6px', borderRadius: '3px' }}>pnpm dev</code> 启动开发服务器
+            </p>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<Demo />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
+
