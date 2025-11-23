@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [0.3.1](https://github.com/Keekuun/markdown-annotation-kit/compare/v0.3.0...v0.3.1) (2025-11-23)
+
+
+### 🔧 Chores
+
+* add husky ([cede3eb](https://github.com/Keekuun/markdown-annotation-kit/commit/cede3ebc4a0af24f220a1cb7d65e8bfbf3343898))
+
+
+### ✨ Features
+
+* **css:** update md styles ([a4d0256](https://github.com/Keekuun/markdown-annotation-kit/commit/a4d0256c36a9b1e3f9b8455e043a909f218c49f1))
+
+
+### 🐛 Bug Fixes
+
+* fix code block annotate ([2881cba](https://github.com/Keekuun/markdown-annotation-kit/commit/2881cba3bccd0bc9de692a928b875b10f29dccd2))
+
 ## [0.3.0](https://github.com/Keekuun/markdown-annotation-kit/compare/v0.2.0...v0.3.0) (2025-11-23)
 
 
