@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { injectMarkTags, stripMarkTags } from "./utils/mark";
+import { injectMarkTags, stripMarkTags, ParsedMark } from "./utils/mark";
 import { getTextPositionByContext } from "./utils/positionCalculator";
 import { AnnotationSidebar } from "./components/AnnotationSidebar";
 import { HighlightedMarkdown } from "./components/HighlightedMarkdown";
 import { PopoverEditor } from "./components/PopoverEditor";
 import { useSelectionHandler } from "./hooks/useSelectionHandler";
+import { createDebouncedPersistence } from "./utils/persistence";
 import "./styles.css";
 
 export type AnnotationItem = { id: number; note: string };
@@ -16,6 +17,22 @@ export type MarkdownAnnotatorProps = {
   defaultAnnotations?: AnnotationItem[];
   annotations?: AnnotationItem[];
   onAnnotationsChange?: (next: AnnotationItem[]) => void;
+  /**
+   * 批注数据变化时的持久化回调
+   * 当批注被添加、编辑或删除时，会自动调用此函数
+   * @param data 完整的批注数据，包含 Markdown、批注列表和标记位置
+   */
+  onPersistence?: (data: {
+    markdown: string;
+    annotations: AnnotationItem[];
+    marks: ParsedMark[];
+    cleanMarkdown: string;
+  }) => void | Promise<void>;
+  /**
+   * 持久化回调的防抖延迟时间（毫秒）
+   * 默认 500ms，设置为 0 表示不使用防抖
+   */
+  persistenceDebounce?: number;
   className?: string;
 };
 
@@ -33,6 +50,8 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
     defaultAnnotations = [],
     annotations,
     onAnnotationsChange,
+    onPersistence,
+    persistenceDebounce = 500,
     className,
   } = props;
 
@@ -52,6 +71,62 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   const highlightRefs = useRef<Record<number, HTMLElement | null>>({});
   const markdownRef = useRef<HTMLDivElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+
+  // 创建持久化回调（带防抖）
+  const persistenceCallbackRef = useRef<ReturnType<typeof createDebouncedPersistence> | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (onPersistence) {
+      const delay = persistenceDebounce > 0 ? persistenceDebounce : 0;
+      persistenceCallbackRef.current = delay
+        ? createDebouncedPersistence(
+            (data) => {
+              onPersistence({
+                markdown: data.markdown,
+                annotations: data.annotations,
+                marks: data.marks,
+                cleanMarkdown: data.cleanMarkdown,
+              });
+            },
+            delay
+          )
+        : (data: {
+            markdown: string;
+            annotations: AnnotationItem[];
+            marks: ParsedMark[];
+            cleanMarkdown: string;
+            version: string;
+            createdAt: number;
+            updatedAt: number;
+          }) => {
+            onPersistence({
+              markdown: data.markdown,
+              annotations: data.annotations,
+              marks: data.marks,
+              cleanMarkdown: data.cleanMarkdown,
+            });
+          };
+    } else {
+      persistenceCallbackRef.current = null;
+    }
+  }, [onPersistence, persistenceDebounce]);
+
+  // 触发持久化回调
+  const triggerPersistence = useCallback(() => {
+    if (persistenceCallbackRef.current) {
+      persistenceCallbackRef.current({
+        markdown: rawMarkdown,
+        annotations: ann,
+        marks: marks,
+        cleanMarkdown: clean,
+        version: "1.0.0",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    }
+  }, [rawMarkdown, ann, marks, clean]);
 
   const [editIndex, setEditIndex] = useState<number>(-1);
   const [editValue, setEditValue] = useState<string>("");
@@ -203,6 +278,11 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
       if (isAnnControlled) onAnnotationsChange && onAnnotationsChange(nextAnn);
       else setAnn(nextAnn);
 
+      // 触发持久化回调
+      setTimeout(() => {
+        triggerPersistence();
+      }, 0);
+
       // 清理临时选中标记
       cleanupTempSelection();
       window.getSelection()?.removeAllRanges();
@@ -226,6 +306,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
       tempSelectionSpanRef,
       setRawMarkdown,
       setAnn,
+      triggerPersistence,
     ]
   );
 
@@ -271,9 +352,13 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
       else setAnn(next);
       setEditIndex(-1);
       setEditValue("");
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+
+      // 触发持久化回调
+      setTimeout(() => {
+        triggerPersistence();
+      }, 0);
     },
-    [editValue, ann, isAnnControlled, onAnnotationsChange, setAnn]
+    [editValue, ann, isAnnControlled, onAnnotationsChange, setAnn, triggerPersistence]
   );
 
   // 删除批注

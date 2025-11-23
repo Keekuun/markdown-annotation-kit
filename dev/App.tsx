@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { MarkdownAnnotator, AnnotationItem } from '../src/index';
+import { useState, useMemo, useCallback } from 'react';
+import { MarkdownAnnotator, AnnotationItem, exportAnnotationData, ParsedMark } from '../src/index';
 import './App.css';
 
 const DEFAULT_MARKDOWN = `# Markdown 文档批注示例
@@ -78,6 +78,8 @@ function App() {
   const [annotations, setAnnotations] = useState<AnnotationItem[]>(DEFAULT_ANNOTATIONS);
   const [previewVisible, setPreviewVisible] = useState(true);
   const [previewTab, setPreviewTab] = useState<PreviewTab>('both');
+  const [marks, setMarks] = useState<ParsedMark[]>([]);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   const markdownPreview = useMemo(() => {
     return markdown;
@@ -86,6 +88,77 @@ function App() {
   const annotationsJson = useMemo(() => {
     return JSON.stringify(annotations, null, 2);
   }, [annotations]);
+
+  // 持久化回调 - 保存到 localStorage
+  const handlePersistence = useCallback(
+    (data: {
+      markdown: string;
+      annotations: AnnotationItem[];
+      marks: ParsedMark[];
+      cleanMarkdown: string;
+    }) => {
+      try {
+        // 保存到 localStorage
+        const storageKey = 'markdown-annotation-kit-data';
+        const dataToSave = exportAnnotationData(data.markdown, data.annotations, data.marks, data.cleanMarkdown);
+        localStorage.setItem(storageKey, dataToSave);
+        setLastSaved(new Date());
+        setMarks(data.marks);
+        console.log('✅ 批注数据已自动保存到 localStorage');
+      } catch (error) {
+        console.error('❌ 保存批注数据失败:', error);
+      }
+    },
+    []
+  );
+
+  // 手动保存按钮
+  const handleManualSave = useCallback(() => {
+    try {
+      const dataToSave = exportAnnotationData(markdown, annotations, marks, markdown.replace(/<mark_\d+>|<\/mark_\d+>/g, ''));
+      
+      // 保存到 localStorage
+      localStorage.setItem('markdown-annotation-kit-data', dataToSave);
+      
+      // 同时提供下载功能
+      const blob = new Blob([dataToSave], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `markdown-annotations-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      setLastSaved(new Date());
+      console.log('✅ 批注数据已保存并下载');
+    } catch (error) {
+      console.error('❌ 保存批注数据失败:', error);
+      alert('保存失败，请查看控制台');
+    }
+  }, [markdown, annotations, marks]);
+
+  // 加载保存的数据
+  const handleLoadSaved = useCallback(() => {
+    try {
+      const storageKey = 'markdown-annotation-kit-data';
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.markdown) setMarkdown(data.markdown);
+        if (data.annotations) setAnnotations(data.annotations);
+        if (data.marks) setMarks(data.marks);
+        console.log('✅ 已加载保存的批注数据');
+        alert('已加载保存的批注数据');
+      } else {
+        alert('没有找到保存的数据');
+      }
+    } catch (error) {
+      console.error('❌ 加载批注数据失败:', error);
+      alert('加载失败，请查看控制台');
+    }
+  }, []);
 
   return (
     <div className="dev-app">
@@ -106,6 +179,30 @@ function App() {
               <span className="dev-app-stat-label">批注数量</span>
               <span className="dev-app-stat-value">{annotations.length}</span>
             </div>
+            {lastSaved && (
+              <div className="dev-app-stat" style={{ opacity: 0.8 }}>
+                <span className="dev-app-stat-label">最后保存</span>
+                <span className="dev-app-stat-value" style={{ fontSize: '12px' }}>
+                  {lastSaved.toLocaleTimeString()}
+                </span>
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button
+                onClick={handleManualSave}
+                className="dev-app-save-button"
+                title="保存批注数据到本地并下载 JSON 文件"
+              >
+                💾 保存
+              </button>
+              <button
+                onClick={handleLoadSaved}
+                className="dev-app-save-button"
+                title="从 localStorage 加载保存的批注数据"
+              >
+                📂 加载
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -117,6 +214,8 @@ function App() {
           onChange={setMarkdown}
           annotations={annotations}
           onAnnotationsChange={setAnnotations}
+          onPersistence={handlePersistence}
+          persistenceDebounce={500}
         />
       </div>
 

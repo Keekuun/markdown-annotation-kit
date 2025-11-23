@@ -68,6 +68,29 @@
   font-weight: 700;
 }
 
+.dev-app-save-button {
+  padding: 8px 16px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dev-app-save-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.dev-app-save-button:active {
+  transform: translateY(0);
+}
+
 /* 主内容区 */
 .dev-app-main {
   flex: 1;
