@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0](https://github.com/Keekuun/markdown-annotation-kit/compare/v0.2.0...v0.3.0) (2025-11-23)
+
+
+### 🔧 Chores
+
+* update release scripts ([b25d12c](https://github.com/Keekuun/markdown-annotation-kit/commit/b25d12c7a43bb66102999db45de8ab4120b03b50))
+
+
+### 🐛 Bug Fixes
+
+* prettier format ([abd7c66](https://github.com/Keekuun/markdown-annotation-kit/commit/abd7c667f4c292d6310f7ae3ab3c53a03781fcbd))
+
+
+### ✨ Features
+
+* save and load json data ([70c9ccc](https://github.com/Keekuun/markdown-annotation-kit/commit/70c9ccca5ac123d642e1dfb91b97045259d93549))
+
 ## 0.2.0 (2025-11-23)
 
 
