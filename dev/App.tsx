@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { MarkdownAnnotator, AnnotationItem } from '../src/index';
+import './App.css';
 
 const DEFAULT_MARKDOWN = `# Markdown 文档批注示例
 
@@ -70,9 +71,13 @@ const DEFAULT_ANNOTATIONS: AnnotationItem[] = [
   },
 ];
 
+type PreviewTab = 'markdown' | 'annotations' | 'both';
+
 function App() {
   const [markdown, setMarkdown] = useState(DEFAULT_MARKDOWN);
   const [annotations, setAnnotations] = useState<AnnotationItem[]>(DEFAULT_ANNOTATIONS);
+  const [previewVisible, setPreviewVisible] = useState(true);
+  const [previewTab, setPreviewTab] = useState<PreviewTab>('both');
 
   const markdownPreview = useMemo(() => {
     return markdown;
@@ -83,25 +88,30 @@ function App() {
   }, [annotations]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <div className="dev-app">
       {/* 头部信息 */}
-      <div
-        style={{
-          padding: '20px',
-          backgroundColor: '#f9fafb',
-          borderBottom: '1px solid #e5e7eb',
-        }}
-      >
-        <h1 style={{ margin: '0 0 8px 0', fontSize: '24px', color: '#1f2937' }}>
-          Markdown Annotation Kit
-        </h1>
-        <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-          开发预览 - 选中文本添加批注，查看实时效果
-        </p>
-      </div>
+      <header className="dev-app-header">
+        <div className="dev-app-header-content">
+          <div>
+            <h1 className="dev-app-title">
+              <span className="dev-app-icon">📝</span>
+              Markdown Annotation Kit
+            </h1>
+            <p className="dev-app-subtitle">
+              开发预览 - 选中文本添加批注，查看实时效果
+            </p>
+          </div>
+          <div className="dev-app-stats">
+            <div className="dev-app-stat">
+              <span className="dev-app-stat-label">批注数量</span>
+              <span className="dev-app-stat-value">{annotations.length}</span>
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* 主内容区 */}
-      <div style={{ flex: 1, minHeight: 0 }}>
+      <div className="dev-app-main">
         <MarkdownAnnotator
           value={markdown}
           onChange={setMarkdown}
@@ -110,58 +120,72 @@ function App() {
         />
       </div>
 
-      {/* 底部数据预览 */}
-      <div
-        style={{
-          height: '200px',
-          borderTop: '1px solid #e5e7eb',
-          backgroundColor: '#ffffff',
-          display: 'flex',
-          gap: '20px',
-          padding: '20px',
-          overflow: 'auto',
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          <h3 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 600, color: '#1f2937' }}>
-            当前 Markdown（包含标签）
-          </h3>
-          <textarea
-            readOnly
-            value={markdownPreview}
-            style={{
-              width: '100%',
-              height: '150px',
-              padding: '8px',
-              border: '1px solid #e5e7eb',
-              borderRadius: '4px',
-              fontSize: '12px',
-              fontFamily: 'monospace',
-              resize: 'none',
-            }}
-          />
-        </div>
-        <div style={{ flex: 1 }}>
-          <h3 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 600, color: '#1f2937' }}>
-            批注数据（JSON）
-          </h3>
-          <pre
-            style={{
-              width: '100%',
-              height: '150px',
-              padding: '8px',
-              border: '1px solid #e5e7eb',
-              borderRadius: '4px',
-              fontSize: '12px',
-              fontFamily: 'monospace',
-              backgroundColor: '#f9fafb',
-              overflow: 'auto',
-              margin: 0,
-            }}
+      {/* 底部数据预览 - 可折叠 */}
+      <div className={`dev-app-preview ${previewVisible ? 'dev-app-preview-visible' : ''}`}>
+        <div className="dev-app-preview-header">
+          <div className="dev-app-preview-tabs">
+            <button
+              className={`dev-app-preview-tab ${previewTab === 'markdown' ? 'active' : ''}`}
+              onClick={() => setPreviewTab('markdown')}
+            >
+              Markdown
+            </button>
+            <button
+              className={`dev-app-preview-tab ${previewTab === 'annotations' ? 'active' : ''}`}
+              onClick={() => setPreviewTab('annotations')}
+            >
+              批注数据
+            </button>
+            <button
+              className={`dev-app-preview-tab ${previewTab === 'both' ? 'active' : ''}`}
+              onClick={() => setPreviewTab('both')}
+            >
+              全部
+            </button>
+          </div>
+          <button
+            className="dev-app-preview-toggle"
+            onClick={() => setPreviewVisible(!previewVisible)}
+            aria-label={previewVisible ? '收起预览' : '展开预览'}
           >
-            {annotationsJson}
-          </pre>
+            {previewVisible ? '▼' : '▲'}
+          </button>
         </div>
+        {previewVisible && (
+          <div className="dev-app-preview-content">
+            {(previewTab === 'markdown' || previewTab === 'both') && (
+              <div className="dev-app-preview-panel">
+                <div className="dev-app-preview-panel-header">
+                  <span className="dev-app-preview-panel-icon">📄</span>
+                  <span className="dev-app-preview-panel-title">当前 Markdown（包含标签）</span>
+                  <span className="dev-app-preview-panel-badge">
+                    {markdown.length} 字符
+                  </span>
+                </div>
+                <textarea
+                  readOnly
+                  value={markdownPreview}
+                  className="dev-app-preview-textarea"
+                  spellCheck={false}
+                />
+              </div>
+            )}
+            {(previewTab === 'annotations' || previewTab === 'both') && (
+              <div className="dev-app-preview-panel">
+                <div className="dev-app-preview-panel-header">
+                  <span className="dev-app-preview-panel-icon">💬</span>
+                  <span className="dev-app-preview-panel-title">批注数据（JSON）</span>
+                  <span className="dev-app-preview-panel-badge">
+                    {annotations.length} 条
+                  </span>
+                </div>
+                <pre className="dev-app-preview-code">
+                  {annotationsJson}
+                </pre>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

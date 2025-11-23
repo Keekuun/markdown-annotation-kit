@@ -63,7 +63,8 @@
 .markdown-annotator-container {
   display: flex;
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
   background-color: var(--markdown-annotator-bg-secondary);
   font-family: var(--markdown-annotator-font-family);
@@ -71,14 +72,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.markdown-annotator-markdown {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .markdown-annotator-content {
   flex: 1;
   padding: var(--markdown-annotator-spacing-xl);
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: var(--markdown-annotator-bg);
-  max-width: calc(100% - 400px);
   box-shadow: var(--markdown-annotator-shadow-sm);
   scroll-behavior: smooth;
+  min-height: 0;
 }
 
 .markdown-annotator-content::-webkit-scrollbar {
@@ -414,101 +425,189 @@
   cursor: not-allowed;
 }
 
-/* Float Window Styles */
-.annotation-float-window {
-  position: absolute;
-  left: 0;
-  top: 0;
+/* Popover Editor Styles (类似 antd PopConfirm) */
+.annotation-popover {
+  position: fixed;
   width: 320px;
-  background-color: var(--markdown-annotator-bg);
-  border: 1px solid var(--markdown-annotator-border);
-  border-radius: var(--markdown-annotator-radius-xl);
-  box-shadow: var(--markdown-annotator-shadow-lg);
-  padding: 20px;
   z-index: 9999;
-  animation: slideIn 0.2s ease-out;
+  animation: popoverSlideIn 0.2s ease-out;
 }
 
-@keyframes slideIn {
+@keyframes popoverSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-8px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-.annotation-float-window-title {
-  margin: 0 0 var(--markdown-annotator-spacing-md) 0;
-  font-size: 16px;
+.annotation-popover-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.annotation-popover-arrow-top {
+  bottom: -8px;
+  border-width: 8px 8px 0 8px;
+  border-color: var(--markdown-annotator-bg) transparent transparent transparent;
+  transform: translateX(-50%);
+}
+
+.annotation-popover-arrow-bottom {
+  top: -8px;
+  border-width: 0 8px 8px 8px;
+  border-color: transparent transparent var(--markdown-annotator-bg) transparent;
+  transform: translateX(-50%);
+}
+
+.annotation-popover-content {
+  background-color: var(--markdown-annotator-bg);
+  border: 1px solid var(--markdown-annotator-border);
+  border-radius: var(--markdown-annotator-radius-lg);
+  box-shadow: var(--markdown-annotator-shadow-lg);
+  overflow: hidden;
+}
+
+.annotation-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--markdown-annotator-border);
+  background-color: var(--markdown-annotator-bg-secondary);
+}
+
+.annotation-popover-title {
+  margin: 0;
+  font-size: 14px;
   font-weight: 600;
   color: var(--markdown-annotator-text-primary);
 }
 
-.annotation-float-editor-textarea {
-  width: 100%;
-  min-height: 100px;
-  border: 2px solid var(--markdown-annotator-border);
-  border-radius: var(--markdown-annotator-radius-lg);
-  padding: 12px;
-  margin-bottom: var(--markdown-annotator-spacing-md);
-  resize: vertical;
-  font-size: 14px;
-  font-family: inherit;
-  line-height: 1.5;
-  outline: none;
+.annotation-popover-close {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--markdown-annotator-text-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--markdown-annotator-radius-sm);
   transition: var(--markdown-annotator-transition);
 }
 
-.annotation-float-editor-textarea:focus {
-  border-color: var(--markdown-annotator-primary);
-  box-shadow: 0 0 0 3px var(--markdown-annotator-primary-light);
+.annotation-popover-close:hover {
+  background-color: var(--markdown-annotator-bg-tertiary);
+  color: var(--markdown-annotator-text-primary);
 }
 
-.annotation-float-editor-actions {
+.annotation-popover-selected-text {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--markdown-annotator-text-secondary);
+  background-color: var(--markdown-annotator-bg-tertiary);
+  border-bottom: 1px solid var(--markdown-annotator-border);
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.annotation-popover-body {
+  padding: 12px 16px;
+}
+
+.annotation-popover-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--markdown-annotator-text-secondary);
+  margin-bottom: 6px;
+}
+
+.annotation-popover-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 12px;
+  border: 1px solid var(--markdown-annotator-border);
+  border-radius: var(--markdown-annotator-radius-md);
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  transition: var(--markdown-annotator-transition);
+  background-color: var(--markdown-annotator-bg);
+  color: var(--markdown-annotator-text-primary);
+}
+
+.annotation-popover-textarea:focus {
+  border-color: var(--markdown-annotator-primary);
+  box-shadow: 0 0 0 2px var(--markdown-annotator-primary-light);
+}
+
+.annotation-popover-textarea::placeholder {
+  color: var(--markdown-annotator-text-muted);
+}
+
+.annotation-popover-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--markdown-annotator-border);
+  background-color: var(--markdown-annotator-bg-secondary);
 }
 
-.annotation-float-button {
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
+.annotation-popover-button {
+  padding: 6px 16px;
+  border-radius: var(--markdown-annotator-radius-md);
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: var(--markdown-annotator-transition);
   outline: none;
+  border: 1px solid transparent;
 }
 
-.annotation-float-button-cancel {
-  border: 1px solid var(--markdown-annotator-border);
-  background-color: var(--markdown-annotator-bg);
-  color: var(--markdown-annotator-text-tertiary);
+.annotation-popover-button-cancel {
+  background-color: transparent;
+  border-color: var(--markdown-annotator-border);
+  color: var(--markdown-annotator-text-secondary);
 }
 
-.annotation-float-button-cancel:hover {
+.annotation-popover-button-cancel:hover {
   background-color: var(--markdown-annotator-bg-tertiary);
   border-color: var(--markdown-annotator-border-hover);
+  color: var(--markdown-annotator-text-primary);
 }
 
-.annotation-float-button-confirm {
-  border: none;
+.annotation-popover-button-confirm {
   background: linear-gradient(135deg, var(--markdown-annotator-primary) 0%, var(--markdown-annotator-primary-hover) 100%);
   color: white;
+  border: none;
   box-shadow: 0 2px 4px var(--markdown-annotator-primary-shadow);
 }
 
-.annotation-float-button-confirm:hover:not(:disabled) {
+.annotation-popover-button-confirm:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--markdown-annotator-primary-hover) 0%, var(--markdown-annotator-primary-active) 100%);
   box-shadow: 0 4px 8px var(--markdown-annotator-primary-shadow);
+  transform: translateY(-1px);
 }
 
-.annotation-float-button-confirm:disabled {
+.annotation-popover-button-confirm:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* Temporary Selection Highlight */

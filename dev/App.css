@@ -1,0 +1,276 @@
+.dev-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f9fafb;
+}
+
+/* 头部样式 */
+.dev-app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.dev-app-header-content {
+  max-width: 100%;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.dev-app-title {
+  margin: 0 0 6px 0;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dev-app-icon {
+  font-size: 28px;
+}
+
+.dev-app-subtitle {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.dev-app-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.dev-app-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.dev-app-stat-label {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.dev-app-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* 主内容区 */
+.dev-app-main {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.dev-app-main .markdown-annotator-container {
+  height: 100%;
+  min-height: 0;
+}
+
+/* 预览区域 */
+.dev-app-preview {
+  background-color: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  z-index: 5;
+}
+
+.dev-app-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dev-app-preview-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.dev-app-preview-tab {
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.dev-app-preview-tab:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.dev-app-preview-tab.active {
+  background-color: #667eea;
+  color: white;
+}
+
+.dev-app-preview-tab.active:hover {
+  background-color: #5568d3;
+}
+
+.dev-app-preview-toggle {
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  min-width: 40px;
+}
+
+.dev-app-preview-toggle:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.dev-app-preview-content {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  max-height: 300px;
+  overflow: auto;
+}
+
+.dev-app-preview-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dev-app-preview-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dev-app-preview-panel-icon {
+  font-size: 16px;
+}
+
+.dev-app-preview-panel-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.dev-app-preview-panel-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.dev-app-preview-textarea,
+.dev-app-preview-code {
+  flex: 1;
+  min-height: 200px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  line-height: 1.6;
+  resize: none;
+  background-color: #fafafa;
+  color: #1f2937;
+  overflow: auto;
+}
+
+.dev-app-preview-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.dev-app-preview-code {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .dev-app-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .dev-app-stats {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .dev-app-preview-content {
+    flex-direction: column;
+    max-height: 400px;
+  }
+
+  .dev-app-preview-panel {
+    min-height: 200px;
+  }
+}
+
+/* 滚动条样式 */
+.dev-app-preview-content::-webkit-scrollbar,
+.dev-app-preview-textarea::-webkit-scrollbar,
+.dev-app-preview-code::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dev-app-preview-content::-webkit-scrollbar-track,
+.dev-app-preview-textarea::-webkit-scrollbar-track,
+.dev-app-preview-code::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.dev-app-preview-content::-webkit-scrollbar-thumb,
+.dev-app-preview-textarea::-webkit-scrollbar-thumb,
+.dev-app-preview-code::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dev-app-preview-content::-webkit-scrollbar-thumb:hover,
+.dev-app-preview-textarea::-webkit-scrollbar-thumb:hover,
+.dev-app-preview-code::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
