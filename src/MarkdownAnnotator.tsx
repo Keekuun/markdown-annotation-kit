@@ -73,25 +73,20 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
   // 创建持久化回调（带防抖）
-  const persistenceCallbackRef = useRef<ReturnType<typeof createDebouncedPersistence> | null>(
-    null
-  );
+  const persistenceCallbackRef = useRef<ReturnType<typeof createDebouncedPersistence> | null>(null);
 
   useEffect(() => {
     if (onPersistence) {
       const delay = persistenceDebounce > 0 ? persistenceDebounce : 0;
       persistenceCallbackRef.current = delay
-        ? createDebouncedPersistence(
-            (data) => {
-              onPersistence({
-                markdown: data.markdown,
-                annotations: data.annotations,
-                marks: data.marks,
-                cleanMarkdown: data.cleanMarkdown,
-              });
-            },
-            delay
-          )
+        ? createDebouncedPersistence((data) => {
+            onPersistence({
+              markdown: data.markdown,
+              annotations: data.annotations,
+              marks: data.marks,
+              cleanMarkdown: data.cleanMarkdown,
+            });
+          }, delay)
         : (data: {
             markdown: string;
             annotations: AnnotationItem[];
