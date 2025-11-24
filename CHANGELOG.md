@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [0.3.5](https://github.com/Keekuun/markdown-annotation-kit/compare/v0.3.4...v0.3.5) (2025-11-24)
+
+
+### ✨ Features
+
+* **annotator:** implement debounced selection handling and remove sidebar toggle ([3336b83](https://github.com/Keekuun/markdown-annotation-kit/commit/3336b83b1b3cb62bac8f52b74282499ace7c44d9))
+
+
+### 🐛 Bug Fixes
+
+* **MarkdownAnnotator:** handle mobile layout detection safely ([f9c1840](https://github.com/Keekuun/markdown-annotation-kit/commit/f9c18407afcb2ced65b21492a235de90ab4deba7))
+
 ### [0.3.4](https://github.com/Keekuun/markdown-annotation-kit/compare/v0.3.3...v0.3.4) (2025-11-24)
 
 
