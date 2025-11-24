@@ -27,6 +27,7 @@
 - 🎛️ **Controlled/Uncontrolled** - Supports both controlled and uncontrolled modes
 - ⚡ **Lightweight** - Minimal dependencies, built on top of `react-markdown`
 - ♿ **Accessible** - Keyboard navigation and ARIA attributes support
+- 📱 **Touch Optimized** - Selection workflow and demo experience tuned for mobile H5
 - 🎨 **Customizable** - Easy to customize styles via CSS variables and classes
 - 🧪 **Well Tested** - Comprehensive test coverage with Vitest
 - 📚 **Well Documented** - Complete API documentation and examples

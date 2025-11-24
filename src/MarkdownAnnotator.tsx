@@ -145,8 +145,17 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   // 监听鼠标事件
   useEffect(() => {
     const onMouseUp = (event: MouseEvent) => handleSelection(event);
+    const onTouchEnd = (event: TouchEvent) => {
+      handleSelection(event);
+    };
+
     document.addEventListener("mouseup", onMouseUp);
-    return () => document.removeEventListener("mouseup", onMouseUp);
+    document.addEventListener("touchend", onTouchEnd);
+
+    return () => {
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("touchend", onTouchEnd);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleSelection]);
 

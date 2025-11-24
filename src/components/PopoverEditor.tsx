@@ -331,10 +331,10 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
     useEffect(() => {
       if (!visible) return;
 
-      const handleClickOutside = (e: MouseEvent) => {
+      const handlePointerOutside = (event: MouseEvent | TouchEvent) => {
         // 如果点击的是弹窗内的任何元素（包括按钮），都不关闭
         // 只有点击外部区域才关闭
-        const target = e.target as Node;
+        const target = event.target as Node;
         if (popoverRef.current && popoverRef.current.contains(target)) {
           // 不阻止事件传播，让按钮的 onClick 可以正常触发
           return;
@@ -347,12 +347,14 @@ export const PopoverEditor = forwardRef<HTMLDivElement, PopoverEditorProps>(
       // 使用 capture 阶段捕获，但不在 capture 阶段阻止事件
       // 延迟添加事件监听，避免立即触发（给用户时间点击输入框）
       const timer = setTimeout(() => {
-        document.addEventListener("mousedown", handleClickOutside, true);
+        document.addEventListener("mousedown", handlePointerOutside, true);
+        document.addEventListener("touchstart", handlePointerOutside, true);
       }, 200);
 
       return () => {
         clearTimeout(timer);
-        document.removeEventListener("mousedown", handleClickOutside, true);
+        document.removeEventListener("mousedown", handlePointerOutside, true);
+        document.removeEventListener("touchstart", handlePointerOutside, true);
       };
     }, [visible, onCancel]);
 

@@ -11,6 +11,8 @@ interface SelectionState {
   text: string;
 }
 
+type SelectionEvent = MouseEvent | TouchEvent;
+
 interface UseSelectionHandlerProps {
   markdownRef: React.RefObject<HTMLDivElement>;
   popoverRef: React.RefObject<HTMLDivElement>;
@@ -83,7 +85,7 @@ export function useSelectionHandler({
   );
 
   const handleSelection = useCallback(
-    (event?: MouseEvent) => {
+    (event?: SelectionEvent) => {
       // 如果点击的是弹窗内的元素，不处理选择逻辑
       if (event) {
         const target = event.target as Node;

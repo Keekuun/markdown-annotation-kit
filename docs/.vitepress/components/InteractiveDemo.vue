@@ -1,5 +1,9 @@
 <template>
-  <div class="interactive-demo" :class="{ 'is-fullscreen': isFullscreen }" ref="demoRef">
+  <div
+    class="interactive-demo"
+    :class="demoClass"
+    ref="demoRef"
+  >
     <div class="demo-header">
       <span class="demo-tip">💡 提示：选中下方文本即可添加批注，点击高亮文本可跳转到批注</span>
       <button class="demo-fullscreen-btn" @click="toggleFullscreen" :aria-label="isFullscreen ? '退出全屏' : '全屏'">
@@ -12,15 +16,24 @@
       </button>
     </div>
     <div ref="containerRef" class="demo-container"></div>
+    <button
+      v-if="shouldShowSidebarToggle"
+      class="sidebar-toggle-btn"
+      @click="toggleSidebarVisibility"
+      :aria-label="isSidebarVisible ? '收起批注' : '查看批注'"
+    >
+      <span>{{ isSidebarVisible ? '收起批注' : '查看批注' }}</span>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 
 const containerRef = ref<HTMLElement>()
 const demoRef = ref<HTMLElement>()
 const isFullscreen = ref(false)
+const manualSidebarOpen = ref(false)
 
 let reactRoot: any = null
 
@@ -59,6 +72,20 @@ const handleFullscreenChange = () => {
     (document as any).mozFullScreenElement ||
     (document as any).msFullscreenElement
   )
+}
+
+const shouldAutoCollapseSidebar = computed(() => true)
+const isSidebarVisible = computed(() => manualSidebarOpen.value)
+const shouldShowSidebarToggle = computed(() => true)
+const demoClass = computed(() => ({
+  'is-fullscreen': isFullscreen.value,
+  'auto-collapse': shouldAutoCollapseSidebar.value,
+  'sidebar-open': manualSidebarOpen.value,
+  'sidebar-collapsed': !manualSidebarOpen.value
+}))
+
+const toggleSidebarVisibility = () => {
+  manualSidebarOpen.value = !manualSidebarOpen.value
 }
 
 onMounted(async () => {
@@ -217,22 +244,24 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .demo-tip {
   color: var(--vp-c-text-2);
   flex: 1;
+  min-width: 200px;
 }
 
 .demo-fullscreen-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--vp-c-bg);
   color: var(--vp-c-text-2);
   cursor: pointer;
@@ -256,8 +285,8 @@ onUnmounted(() => {
 }
 
 .demo-container {
-  height: 600px;
-  min-height: 600px;
+  height: min(600px, 70vh);
+  min-height: min(600px, 70vh);
   position: relative;
 }
 
@@ -268,8 +297,8 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .demo-container {
-    height: 500px;
-    min-height: 500px;
+    height: min(440px, 70vh);
+    min-height: min(440px, 70vh);
   }
 
   .interactive-demo.is-fullscreen .demo-container {
@@ -279,7 +308,56 @@ onUnmounted(() => {
 
   .demo-tip {
     font-size: 12px;
+    line-height: 1.4;
   }
+
+  .demo-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .demo-fullscreen-btn {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.interactive-demo.auto-collapse .demo-container {
+  height: calc(100vh - 140px);
+  min-height: calc(100vh - 140px);
+}
+
+.interactive-demo .sidebar-toggle-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 20px;
+  background: var(--vp-c-brand);
+  color: white;
+  font-size: 14px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.interactive-demo.is-fullscreen .sidebar-toggle-btn {
+  position: fixed;
+}
+
+.interactive-demo.auto-collapse.sidebar-open :deep(.markdown-annotator-sidebar) {
+  display: flex !important;
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: min(420px, 85vw);
+  z-index: 9998;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.interactive-demo.auto-collapse.sidebar-collapsed :deep(.markdown-annotator-sidebar) {
+  display: none !important;
 }
 </style>
 
