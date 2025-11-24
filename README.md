@@ -108,6 +108,8 @@ The main component for rendering and annotating Markdown content.
 | `annotations` | `AnnotationItem[]` | - | Controlled mode: Array of annotation items |
 | `defaultAnnotations` | `AnnotationItem[]` | `[]` | Uncontrolled mode: Initial annotations |
 | `onAnnotationsChange` | `(annotations: AnnotationItem[]) => void` | - | Controlled mode: Callback when annotations change |
+| `onPersistence` | `(data: {...}) => void \| Promise<void>` | - | Callback when annotation data changes (with debounce support) |
+| `persistenceDebounce` | `number` | `500` | Debounce delay in milliseconds for `onPersistence` callback |
 | `className` | `string` | - | Additional CSS class name for the container |
 
 #### Type Definitions

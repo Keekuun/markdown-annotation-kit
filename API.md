@@ -154,6 +154,50 @@ const handleAnnotationsChange = (newAnnotations: AnnotationItem[]) => {
 
 ---
 
+##### `onPersistence?: (data: {...}) => void | Promise<void>`
+
+持久化回调函数。
+
+- **类型**: `(data: { markdown: string; annotations: AnnotationItem[]; marks: ParsedMark[]; cleanMarkdown: string }) => void | Promise<void>`
+- **参数**:
+  - `data.markdown: string` - 包含 `<mark_N></mark_N>` 标签的原始 Markdown 内容
+  - `data.annotations: AnnotationItem[]` - 批注列表
+  - `data.marks: ParsedMark[]` - 解析后的标记位置信息
+  - `data.cleanMarkdown: string` - 清理后的 Markdown 内容（不包含标签）
+- **说明**: 当批注数据发生变化时触发，支持防抖。回调函数可以返回 `Promise<void>` 以支持异步操作。
+
+**示例：**
+```tsx
+const handlePersistence = async (data) => {
+  // 保存到服务器
+  await saveToServer({
+    markdown: data.markdown,
+    annotations: data.annotations,
+    marks: data.marks,
+    cleanMarkdown: data.cleanMarkdown,
+  });
+};
+
+<MarkdownAnnotator
+  value={markdown}
+  annotations={annotations}
+  onPersistence={handlePersistence}
+  persistenceDebounce={500}
+/>
+```
+
+---
+
+##### `persistenceDebounce?: number`
+
+持久化防抖延迟时间（毫秒）。
+
+- **类型**: `number`
+- **默认值**: `500`
+- **说明**: 控制 `onPersistence` 回调的防抖延迟时间。设置为 0 表示不使用防抖。
+
+---
+
 ##### `className?: string`
 
 自定义 CSS 类名。
@@ -210,6 +254,13 @@ type MarkdownAnnotatorProps = {
   defaultAnnotations?: AnnotationItem[];
   annotations?: AnnotationItem[];
   onAnnotationsChange?: (annotations: AnnotationItem[]) => void;
+  onPersistence?: (data: {
+    markdown: string;
+    annotations: AnnotationItem[];
+    marks: ParsedMark[];
+    cleanMarkdown: string;
+  }) => void | Promise<void>;
+  persistenceDebounce?: number;
   className?: string;
 };
 ```

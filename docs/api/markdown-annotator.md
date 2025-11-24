@@ -133,21 +133,29 @@ const handleAnnotationsChange = (newAnnotations: AnnotationItem[]) => {
 
 ---
 
-### `onPersistence?: (data: AnnotationData) => void`
+### `onPersistence?: (data: {...}) => void | Promise<void>`
 
 持久化回调函数。
 
-- **类型**: `(data: AnnotationData) => void`
+- **类型**: `(data: { markdown: string; annotations: AnnotationItem[]; marks: ParsedMark[]; cleanMarkdown: string }) => void | Promise<void>`
 - **参数**:
-  - `data: AnnotationData` - 包含 markdown、annotations 和 marks 的完整数据
-- **说明**: 当批注数据发生变化时触发，支持防抖。
+  - `data.markdown: string` - 包含 `<mark_N></mark_N>` 标签的原始 Markdown 内容
+  - `data.annotations: AnnotationItem[]` - 批注列表
+  - `data.marks: ParsedMark[]` - 解析后的标记位置信息
+  - `data.cleanMarkdown: string` - 清理后的 Markdown 内容（不包含标签）
+- **说明**: 当批注数据发生变化时触发，支持防抖。回调函数可以返回 `Promise<void>` 以支持异步操作。
 
 **示例：**
 
 ```tsx
-const handlePersistence = (data: AnnotationData) => {
+const handlePersistence = async (data) => {
   // 保存到服务器
-  saveToServer(data);
+  await saveToServer({
+    markdown: data.markdown,
+    annotations: data.annotations,
+    marks: data.marks,
+    cleanMarkdown: data.cleanMarkdown,
+  });
 };
 
 <MarkdownAnnotator

@@ -1,91 +1,91 @@
 {
-  "hash": "aec43d4e",
-  "configHash": "d7dc44bd",
+  "hash": "35c808c8",
+  "configHash": "fbc7a69c",
   "lockfileHash": "99dfce43",
-  "browserHash": "854c11e3",
+  "browserHash": "2b1a2c38",
   "optimized": {
     "react": {
       "src": "../../../../node_modules/.pnpm/react@18.3.1/node_modules/react/index.js",
       "file": "react.js",
-      "fileHash": "8120c0ef",
+      "fileHash": "1b6146cd",
       "needsInterop": true
     },
     "react-dom": {
       "src": "../../../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/index.js",
       "file": "react-dom.js",
-      "fileHash": "dddc71aa",
+      "fileHash": "999cf6d4",
       "needsInterop": true
     },
     "react/jsx-dev-runtime": {
       "src": "../../../../node_modules/.pnpm/react@18.3.1/node_modules/react/jsx-dev-runtime.js",
       "file": "react_jsx-dev-runtime.js",
-      "fileHash": "8fd7077b",
+      "fileHash": "45e14187",
       "needsInterop": true
     },
     "react/jsx-runtime": {
       "src": "../../../../node_modules/.pnpm/react@18.3.1/node_modules/react/jsx-runtime.js",
       "file": "react_jsx-runtime.js",
-      "fileHash": "396adff2",
+      "fileHash": "f3007f95",
       "needsInterop": true
     },
     "vue": {
       "src": "../../../../node_modules/.pnpm/vue@3.5.24_typescript@5.9.3/node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "d20fc75f",
+      "fileHash": "01a281de",
       "needsInterop": false
     },
     "vitepress > @vue/devtools-api": {
       "src": "../../../../node_modules/.pnpm/@vue+devtools-api@7.7.9/node_modules/@vue/devtools-api/dist/index.js",
       "file": "vitepress___@vue_devtools-api.js",
-      "fileHash": "03d12b1d",
+      "fileHash": "3ec07395",
       "needsInterop": false
     },
     "vitepress > @vueuse/core": {
       "src": "../../../../node_modules/.pnpm/@vueuse+core@12.8.2_typescript@5.9.3/node_modules/@vueuse/core/index.mjs",
       "file": "vitepress___@vueuse_core.js",
-      "fileHash": "d693d218",
+      "fileHash": "961fa852",
       "needsInterop": false
     },
     "react-markdown": {
       "src": "../../../../node_modules/.pnpm/react-markdown@9.1.0_@types+react@18.3.27_react@18.3.1/node_modules/react-markdown/index.js",
       "file": "react-markdown.js",
-      "fileHash": "8a72f2d6",
+      "fileHash": "45cd58d2",
       "needsInterop": false
     },
     "remark-gfm": {
       "src": "../../../../node_modules/.pnpm/remark-gfm@4.0.1/node_modules/remark-gfm/index.js",
       "file": "remark-gfm.js",
-      "fileHash": "a58f8510",
+      "fileHash": "43f06b4c",
       "needsInterop": false
     },
     "rehype-raw": {
       "src": "../../../../node_modules/.pnpm/rehype-raw@7.0.0/node_modules/rehype-raw/index.js",
       "file": "rehype-raw.js",
-      "fileHash": "fd9d7711",
+      "fileHash": "2c80f21b",
       "needsInterop": false
     },
     "vitepress > @vueuse/integrations/useFocusTrap": {
-      "src": "../../../../node_modules/.pnpm/@vueuse+integrations@12.8.2_focus-trap@7.6.6_typescript@5.9.3/node_modules/@vueuse/integrations/useFocusTrap.mjs",
+      "src": "../../../../node_modules/.pnpm/@vueuse+integrations@12.8.2_24aa4b0c44ddc97daa9b566766b747e7/node_modules/@vueuse/integrations/useFocusTrap.mjs",
       "file": "vitepress___@vueuse_integrations_useFocusTrap.js",
-      "fileHash": "0294e7e2",
+      "fileHash": "106e07f7",
       "needsInterop": false
     },
     "vitepress > mark.js/src/vanilla.js": {
       "src": "../../../../node_modules/.pnpm/mark.js@8.11.1/node_modules/mark.js/src/vanilla.js",
       "file": "vitepress___mark__js_src_vanilla__js.js",
-      "fileHash": "820894e9",
+      "fileHash": "11e18e8d",
       "needsInterop": false
     },
     "vitepress > minisearch": {
       "src": "../../../../node_modules/.pnpm/minisearch@7.2.0/node_modules/minisearch/dist/es/index.js",
       "file": "vitepress___minisearch.js",
-      "fileHash": "366db5b9",
+      "fileHash": "fea33986",
       "needsInterop": false
     },
     "react-dom/client": {
       "src": "../../../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/client.js",
       "file": "react-dom_client.js",
-      "fileHash": "e0f33834",
+      "fileHash": "b47a565b",
       "needsInterop": true
     }
   },

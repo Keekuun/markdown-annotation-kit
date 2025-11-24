@@ -21,19 +21,28 @@
 
 ### 获取数据
 
-在非受控模式下，可以通过 ref 或表单提交时获取数据：
+在非受控模式下，可以通过 `onChange` 和 `onAnnotationsChange` 回调获取数据：
 
 ```tsx
-import { useRef } from "react";
-import { exportAnnotationData } from "markdown-annotation-kit";
+import { useState } from "react";
+import { exportAnnotationData, stripMarkTags } from "markdown-annotation-kit";
 
 function UncontrolledExample() {
   const [markdown, setMarkdown] = useState("# 标题");
   const [annotations, setAnnotations] = useState([]);
 
   const handleSubmit = () => {
-    const data = exportAnnotationData(markdown, annotations);
+    // 解析 marks
+    const parseResult = stripMarkTags(markdown);
+    // 导出数据
+    const dataJson = exportAnnotationData(
+      markdown,
+      annotations,
+      parseResult.marks,
+      parseResult.clean
+    );
     // 提交数据
+    console.log("提交的数据:", JSON.parse(dataJson));
   };
 
   return (

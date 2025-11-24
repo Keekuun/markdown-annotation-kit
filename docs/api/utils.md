@@ -2,23 +2,27 @@
 
 ## exportAnnotationData
 
-导出完整的批注数据。
+导出完整的批注数据为 JSON 字符串。
 
 ```typescript
 function exportAnnotationData(
   markdown: string,
-  annotations: AnnotationItem[]
-): AnnotationData;
+  annotations: AnnotationItem[],
+  marks: ParsedMark[],
+  cleanMarkdown?: string
+): string;
 ```
 
 ### 参数
 
 - `markdown: string` - 包含 `<mark_N></mark_N>` 标签的 Markdown 内容
 - `annotations: AnnotationItem[]` - 批注列表
+- `marks: ParsedMark[]` - 标记位置信息
+- `cleanMarkdown?: string` - 清理后的 Markdown 内容（可选，如果不提供会自动计算）
 
 ### 返回值
 
-返回包含 `markdown`、`annotations` 和 `marks` 的完整数据对象。
+返回 JSON 字符串，包含完整的 `AnnotationData` 对象。
 
 ### 示例
 
@@ -34,22 +38,23 @@ await saveToServer(data);
 
 ## importAnnotationData
 
-导入完整的批注数据。
+从 JSON 字符串导入完整的批注数据。
 
 ```typescript
-function importAnnotationData(data: AnnotationData): {
-  markdown: string;
-  annotations: AnnotationItem[];
-};
+function importAnnotationData(jsonString: string): AnnotationData;
 ```
 
 ### 参数
 
-- `data: AnnotationData` - 完整的批注数据
+- `jsonString: string` - JSON 格式的批注数据字符串
 
 ### 返回值
 
-返回包含 `markdown` 和 `annotations` 的对象。
+返回完整的 `AnnotationData` 对象。
+
+### 异常
+
+如果 JSON 格式不正确或必需字段缺失，会抛出错误。
 
 ### 示例
 
@@ -64,46 +69,45 @@ const { markdown, annotations } = importAnnotationData(data);
 
 ## exportSimplifiedAnnotationData
 
-导出简化版的批注数据（不包含 marks）。
+导出简化版的批注数据为 JSON 字符串（不包含 Markdown 内容）。
 
 ```typescript
 function exportSimplifiedAnnotationData(
-  markdown: string,
-  annotations: AnnotationItem[]
-): SimplifiedAnnotationData;
+  annotations: AnnotationItem[],
+  marks: ParsedMark[]
+): string;
 ```
 
 ### 参数
 
-- `markdown: string` - 包含 `<mark_N></mark_N>` 标签的 Markdown 内容
 - `annotations: AnnotationItem[]` - 批注列表
+- `marks: ParsedMark[]` - 标记位置信息
 
 ### 返回值
 
-返回包含 `markdown` 和 `annotations` 的简化数据对象。
+返回 JSON 字符串，包含 `SimplifiedAnnotationData` 对象。
 
 ---
 
 ## importSimplifiedAnnotationData
 
-导入简化版的批注数据。
+从 JSON 字符串导入简化版的批注数据。
 
 ```typescript
-function importSimplifiedAnnotationData(
-  data: SimplifiedAnnotationData
-): {
-  markdown: string;
-  annotations: AnnotationItem[];
-};
+function importSimplifiedAnnotationData(jsonString: string): SimplifiedAnnotationData;
 ```
 
 ### 参数
 
-- `data: SimplifiedAnnotationData` - 简化版的批注数据
+- `jsonString: string` - JSON 格式的简化批注数据字符串
 
 ### 返回值
 
-返回包含 `markdown` 和 `annotations` 的对象。
+返回 `SimplifiedAnnotationData` 对象。
+
+### 异常
+
+如果 JSON 格式不正确或必需字段缺失，会抛出错误。
 
 ---
 
@@ -113,19 +117,19 @@ function importSimplifiedAnnotationData(
 
 ```typescript
 function createDebouncedPersistence(
-  callback: (data: AnnotationData) => void,
+  callback: PersistenceCallback,
   delay?: number
 ): (data: AnnotationData) => void;
 ```
 
 ### 参数
 
-- `callback: (data: AnnotationData) => void` - 持久化回调函数
+- `callback: PersistenceCallback` - 持久化回调函数，类型为 `(data: AnnotationData) => void | Promise<void>`
 - `delay?: number` - 防抖延迟时间（毫秒），默认 500
 
 ### 返回值
 
-返回防抖后的回调函数。
+返回防抖后的回调函数，接收 `AnnotationData` 作为参数。
 
 ### 示例
 

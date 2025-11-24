@@ -42,10 +42,17 @@ function PersistenceExample() {
 ### 导出数据
 
 ```tsx
-import { exportAnnotationData } from "markdown-annotation-kit";
+import { exportAnnotationData, stripMarkTags } from "markdown-annotation-kit";
 
-const data = exportAnnotationData(markdown, annotations);
-// data 包含 { markdown, annotations, marks }
+// 首先需要解析 marks
+const parseResult = stripMarkTags(markdown);
+const dataJson = exportAnnotationData(
+  markdown,
+  annotations,
+  parseResult.marks,
+  parseResult.clean
+);
+// dataJson 是 JSON 字符串，包含完整的 AnnotationData
 ```
 
 ### 导入数据
@@ -53,7 +60,9 @@ const data = exportAnnotationData(markdown, annotations);
 ```tsx
 import { importAnnotationData } from "markdown-annotation-kit";
 
-const { markdown, annotations } = importAnnotationData(data);
+const data = importAnnotationData(jsonString);
+// data 是完整的 AnnotationData 对象，包含：
+// { markdown, annotations, marks, cleanMarkdown, version, createdAt, updatedAt }
 ```
 
 ## 本地存储示例
@@ -74,18 +83,22 @@ function LocalStorageExample() {
   useEffect(() => {
     const saved = localStorage.getItem("annotation-data");
     if (saved) {
-      const data = JSON.parse(saved);
-      const { markdown: loadedMarkdown, annotations: loadedAnnotations } =
-        importAnnotationData(data);
-      setMarkdown(loadedMarkdown);
-      setAnnotations(loadedAnnotations);
+      const data = importAnnotationData(saved);
+      setMarkdown(data.markdown);
+      setAnnotations(data.annotations);
     }
   }, []);
 
   // 保存
-  const handlePersistence = createDebouncedPersistence((data) => {
-    localStorage.setItem("annotation-data", JSON.stringify(data));
-  }, 500);
+  const handlePersistence = (data) => {
+    const jsonString = JSON.stringify({
+      markdown: data.markdown,
+      annotations: data.annotations,
+      marks: data.marks,
+      cleanMarkdown: data.cleanMarkdown,
+    });
+    localStorage.setItem("annotation-data", jsonString);
+  };
 
   return (
     <MarkdownAnnotator
@@ -123,19 +136,27 @@ const handlePersistence = createDebouncedPersistence(async (data) => {
 
 ## 简化版数据格式
 
-如果不需要 `marks` 信息，可以使用简化版：
+如果不需要 Markdown 内容，只需要批注和标记信息，可以使用简化版：
 
 ```tsx
 import {
   exportSimplifiedAnnotationData,
   importSimplifiedAnnotationData,
+  stripMarkTags,
 } from "markdown-annotation-kit";
 
-// 导出
-const simplified = exportSimplifiedAnnotationData(markdown, annotations);
-// { markdown, annotations }
+// 首先需要解析 marks
+const parseResult = stripMarkTags(markdown);
+
+// 导出（不包含 Markdown）
+const simplifiedJson = exportSimplifiedAnnotationData(
+  annotations,
+  parseResult.marks
+);
+// simplifiedJson 是 JSON 字符串，包含 { annotations, marks, version, updatedAt }
 
 // 导入
-const { markdown, annotations } = importSimplifiedAnnotationData(simplified);
+const simplified = importSimplifiedAnnotationData(simplifiedJson);
+// simplified 包含 { annotations, marks, version, updatedAt }
 ```
 

@@ -115,10 +115,10 @@ function LoadSavedExample() {
 
 ## 实时保存到服务器
 
-每次批注变化时自动保存到服务器。
+每次批注变化时自动保存到服务器。推荐使用 `onPersistence` 属性，它已经内置了防抖功能。
 
 ```tsx
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { MarkdownAnnotator, AnnotationItem } from 'markdown-annotation-kit';
 
 function AutoSaveExample() {
@@ -129,42 +129,25 @@ function AutoSaveExample() {
   const [annotations, setAnnotations] = useState<AnnotationItem[]>([]);
   const [saving, setSaving] = useState(false);
 
-  // 防抖保存函数
-  const debounce = (func: Function, wait: number) => {
-    let timeout: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  };
-
-  const saveToServer = useCallback(
-    debounce(async (data: { markdown: string; annotations: AnnotationItem[] }) => {
-      setSaving(true);
-      try {
-        await fetch('/api/document/save', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        console.log('保存成功');
-      } catch (error) {
-        console.error('保存失败:', error);
-      } finally {
-        setSaving(false);
-      }
-    }, 1000),
-    []
-  );
-
-  const handleMarkdownChange = (newMarkdown: string) => {
-    setMarkdown(newMarkdown);
-    saveToServer({ markdown: newMarkdown, annotations });
-  };
-
-  const handleAnnotationsChange = (newAnnotations: AnnotationItem[]) => {
-    setAnnotations(newAnnotations);
-    saveToServer({ markdown, annotations: newAnnotations });
+  const handlePersistence = async (data) => {
+    setSaving(true);
+    try {
+      await fetch('/api/document/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          markdown: data.markdown,
+          annotations: data.annotations,
+          marks: data.marks,
+          cleanMarkdown: data.cleanMarkdown,
+        }),
+      });
+      console.log('保存成功');
+    } catch (error) {
+      console.error('保存失败:', error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -185,14 +168,18 @@ function AutoSaveExample() {
       )}
       <MarkdownAnnotator
         value={markdown}
-        onChange={handleMarkdownChange}
+        onChange={setMarkdown}
         annotations={annotations}
-        onAnnotationsChange={handleAnnotationsChange}
+        onAnnotationsChange={setAnnotations}
+        onPersistence={handlePersistence}
+        persistenceDebounce={1000}
       />
     </div>
   );
 }
 ```
+
+**注意**: `onPersistence` 会在批注添加、编辑或删除时自动触发，并且已经内置了防抖功能。你只需要提供一个回调函数即可，无需手动实现防抖逻辑。
 
 ## 自定义样式
 

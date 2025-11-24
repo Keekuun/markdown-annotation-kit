@@ -39,11 +39,20 @@ type MarkdownAnnotatorProps = {
   defaultAnnotations?: AnnotationItem[];
   annotations?: AnnotationItem[];
   onAnnotationsChange?: (annotations: AnnotationItem[]) => void;
-  onPersistence?: (data: AnnotationData) => void;
+  onPersistence?: (data: {
+    markdown: string;
+    annotations: AnnotationItem[];
+    marks: ParsedMark[];
+    cleanMarkdown: string;
+  }) => void | Promise<void>;
   persistenceDebounce?: number;
   className?: string;
 };
 ```
+
+### 属性说明
+
+- `onPersistence` - 批注数据变化时的持久化回调。接收的数据包含 `markdown`、`annotations`、`marks` 和 `cleanMarkdown`，但不包含 `version`、`createdAt`、`updatedAt` 等元数据字段。
 
 ---
 
@@ -52,18 +61,26 @@ type MarkdownAnnotatorProps = {
 持久化数据的完整结构。
 
 ```typescript
-type AnnotationData = {
+interface AnnotationData {
   markdown: string;
   annotations: AnnotationItem[];
   marks: ParsedMark[];
-};
+  cleanMarkdown: string;
+  version: string;
+  createdAt: number;
+  updatedAt: number;
+}
 ```
 
 ### 属性说明
 
-- `markdown: string` - 包含 `<mark_N></mark_N>` 标签的 Markdown 内容
+- `markdown: string` - 包含 `<mark_N></mark_N>` 标签的原始 Markdown 内容
 - `annotations: AnnotationItem[]` - 批注列表
 - `marks: ParsedMark[]` - 解析后的标记位置信息
+- `cleanMarkdown: string` - 清理后的 Markdown 内容（不包含标签）
+- `version: string` - 版本号，用于兼容性检查
+- `createdAt: number` - 创建时间戳
+- `updatedAt: number` - 更新时间戳
 
 ---
 
@@ -83,12 +100,21 @@ type ParsedMark = {
 
 ## SimplifiedAnnotationData
 
-简化版的持久化数据结构（不包含 marks）。
+简化版的持久化数据结构（不包含 Markdown 内容）。
 
 ```typescript
-type SimplifiedAnnotationData = {
-  markdown: string;
+interface SimplifiedAnnotationData {
   annotations: AnnotationItem[];
-};
+  marks: ParsedMark[];
+  version: string;
+  updatedAt: number;
+}
 ```
+
+### 属性说明
+
+- `annotations: AnnotationItem[]` - 批注列表
+- `marks: ParsedMark[]` - 解析后的标记位置信息
+- `version: string` - 版本号，用于兼容性检查
+- `updatedAt: number` - 更新时间戳
 
