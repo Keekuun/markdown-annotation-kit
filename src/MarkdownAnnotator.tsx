@@ -113,7 +113,10 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   }, [onPersistence, persistenceDebounce]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      setIsMobileLayout(false);
+      return;
+    }
     const mediaQuery = window.matchMedia("(max-width: 1024px)");
     const updateLayout = () => setIsMobileLayout(mediaQuery.matches);
     updateLayout();
