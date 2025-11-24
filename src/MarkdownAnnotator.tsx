@@ -74,6 +74,7 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   const pointerActiveRef = useRef(false);
   const [isMobileLayout, setIsMobileLayout] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const selectionChangeTimeoutRef = useRef<number | null>(null);
 
   // 创建持久化回调（带防抖）
   const persistenceCallbackRef = useRef<ReturnType<typeof createDebouncedPersistence> | null>(null);
@@ -159,23 +160,48 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   });
 
   // 监听鼠标事件
+  const clearPendingSelection = useCallback(() => {
+    if (selectionChangeTimeoutRef.current) {
+      window.clearTimeout(selectionChangeTimeoutRef.current);
+      selectionChangeTimeoutRef.current = null;
+    }
+  }, []);
+
+  const scheduleHandleSelection = useCallback(
+    (event?: MouseEvent | TouchEvent, immediate = false) => {
+      clearPendingSelection();
+      if (immediate) {
+        handleSelection(event);
+        return;
+      }
+      selectionChangeTimeoutRef.current = window.setTimeout(() => {
+        handleSelection(event);
+        selectionChangeTimeoutRef.current = null;
+      }, 250);
+    },
+    [handleSelection, clearPendingSelection]
+  );
+
   useEffect(() => {
     const onMouseDown = () => {
       pointerActiveRef.current = true;
+      clearPendingSelection();
     };
     const onTouchStart = () => {
       pointerActiveRef.current = true;
+      clearPendingSelection();
     };
     const onMouseUp = (event: MouseEvent) => {
       pointerActiveRef.current = false;
-      handleSelection(event);
+      scheduleHandleSelection(event, true);
     };
     const onTouchEnd = (event: TouchEvent) => {
       pointerActiveRef.current = false;
-      handleSelection(event);
+      scheduleHandleSelection(event, true);
     };
     const onTouchCancel = () => {
       pointerActiveRef.current = false;
+      clearPendingSelection();
     };
 
     document.addEventListener("mousedown", onMouseDown);
@@ -190,19 +216,20 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("touchend", onTouchEnd);
       document.removeEventListener("touchcancel", onTouchCancel);
+      clearPendingSelection();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleSelection]);
+  }, [scheduleHandleSelection, clearPendingSelection]);
 
   useEffect(() => {
     const onSelectionChange = () => {
       if (pointerActiveRef.current) return;
-      handleSelection();
+      scheduleHandleSelection();
     };
 
     document.addEventListener("selectionchange", onSelectionChange);
     return () => document.removeEventListener("selectionchange", onSelectionChange);
-  }, [handleSelection]);
+  }, [scheduleHandleSelection]);
 
   // 同步外部 annotations
   useEffect(() => {

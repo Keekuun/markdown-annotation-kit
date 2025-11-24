@@ -16,14 +16,6 @@
       </button>
     </div>
     <div ref="containerRef" class="demo-container"></div>
-    <button
-      v-if="shouldShowSidebarToggle"
-      class="sidebar-toggle-btn"
-      @click="toggleSidebarVisibility"
-      :aria-label="isSidebarVisible ? '收起批注' : '查看批注'"
-    >
-      <span>{{ isSidebarVisible ? '收起批注' : '查看批注' }}</span>
-    </button>
   </div>
 </template>
 
@@ -33,7 +25,6 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 const containerRef = ref<HTMLElement>()
 const demoRef = ref<HTMLElement>()
 const isFullscreen = ref(false)
-const manualSidebarOpen = ref(false)
 
 let reactRoot: any = null
 
@@ -74,19 +65,9 @@ const handleFullscreenChange = () => {
   )
 }
 
-const shouldAutoCollapseSidebar = computed(() => true)
-const isSidebarVisible = computed(() => manualSidebarOpen.value)
-const shouldShowSidebarToggle = computed(() => true)
 const demoClass = computed(() => ({
-  'is-fullscreen': isFullscreen.value,
-  'auto-collapse': shouldAutoCollapseSidebar.value,
-  'sidebar-open': manualSidebarOpen.value,
-  'sidebar-collapsed': !manualSidebarOpen.value
+  'is-fullscreen': isFullscreen.value
 }))
-
-const toggleSidebarVisibility = () => {
-  manualSidebarOpen.value = !manualSidebarOpen.value
-}
 
 onMounted(async () => {
   // 监听全屏状态变化
@@ -322,42 +303,5 @@ onUnmounted(() => {
   }
 }
 
-.interactive-demo.auto-collapse .demo-container {
-  height: calc(100vh - 140px);
-  min-height: calc(100vh - 140px);
-}
-
-.interactive-demo .sidebar-toggle-btn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 10000;
-  border: none;
-  border-radius: 999px;
-  padding: 12px 20px;
-  background: var(--vp-c-brand);
-  color: white;
-  font-size: 14px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
-.interactive-demo.is-fullscreen .sidebar-toggle-btn {
-  position: fixed;
-}
-
-.interactive-demo.auto-collapse.sidebar-open :deep(.markdown-annotator-sidebar) {
-  display: flex !important;
-  position: fixed;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: min(420px, 85vw);
-  z-index: 9998;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
-}
-
-.interactive-demo.auto-collapse.sidebar-collapsed :deep(.markdown-annotator-sidebar) {
-  display: none !important;
-}
 </style>
 
