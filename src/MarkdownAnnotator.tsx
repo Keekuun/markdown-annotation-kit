@@ -71,6 +71,9 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   const highlightRefs = useRef<Record<number, HTMLElement | null>>({});
   const markdownRef = useRef<HTMLDivElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+  const pointerActiveRef = useRef(false);
+  const [isMobileLayout, setIsMobileLayout] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // 创建持久化回调（带防抖）
   const persistenceCallbackRef = useRef<ReturnType<typeof createDebouncedPersistence> | null>(null);
@@ -108,6 +111,19 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
     }
   }, [onPersistence, persistenceDebounce]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(max-width: 1024px)");
+    const updateLayout = () => setIsMobileLayout(mediaQuery.matches);
+    updateLayout();
+    mediaQuery.addEventListener("change", updateLayout);
+    return () => mediaQuery.removeEventListener("change", updateLayout);
+  }, []);
+
+  useEffect(() => {
+    setSidebarOpen(!isMobileLayout);
+  }, [isMobileLayout]);
+
   // 触发持久化回调
   const triggerPersistence = useCallback(() => {
     if (persistenceCallbackRef.current) {
@@ -144,19 +160,48 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
 
   // 监听鼠标事件
   useEffect(() => {
-    const onMouseUp = (event: MouseEvent) => handleSelection(event);
-    const onTouchEnd = (event: TouchEvent) => {
+    const onMouseDown = () => {
+      pointerActiveRef.current = true;
+    };
+    const onTouchStart = () => {
+      pointerActiveRef.current = true;
+    };
+    const onMouseUp = (event: MouseEvent) => {
+      pointerActiveRef.current = false;
       handleSelection(event);
     };
+    const onTouchEnd = (event: TouchEvent) => {
+      pointerActiveRef.current = false;
+      handleSelection(event);
+    };
+    const onTouchCancel = () => {
+      pointerActiveRef.current = false;
+    };
 
+    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("touchstart", onTouchStart, { passive: true });
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("touchend", onTouchEnd);
+    document.addEventListener("touchcancel", onTouchCancel);
 
     return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("touchstart", onTouchStart);
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("touchend", onTouchEnd);
+      document.removeEventListener("touchcancel", onTouchCancel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleSelection]);
+
+  useEffect(() => {
+    const onSelectionChange = () => {
+      if (pointerActiveRef.current) return;
+      handleSelection();
+    };
+
+    document.addEventListener("selectionchange", onSelectionChange);
+    return () => document.removeEventListener("selectionchange", onSelectionChange);
   }, [handleSelection]);
 
   // 同步外部 annotations
@@ -315,19 +360,35 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   );
 
   // 锚点到高亮
+  const ensureSidebarVisible = useCallback(() => {
+    if (isMobileLayout && !sidebarOpen) {
+      setSidebarOpen(true);
+      return true;
+    }
+    return false;
+  }, [isMobileLayout, sidebarOpen]);
+
   const anchorToHighlight = useCallback(
     (idx: number) => {
       const item = ann[idx];
       if (!item) return;
-      const el = highlightRefs.current[item.id];
-      if (!el) return;
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-      el.style.backgroundColor = "rgba(37, 99, 235, 0.2)";
-      setTimeout(() => {
-        if (el) el.style.backgroundColor = "transparent";
-      }, 1000);
+      const openTriggered = ensureSidebarVisible();
+      const scrollToHighlight = () => {
+        const el = highlightRefs.current[item.id];
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.style.backgroundColor = "rgba(37, 99, 235, 0.2)";
+        setTimeout(() => {
+          if (el) el.style.backgroundColor = "transparent";
+        }, 1000);
+      };
+      if (openTriggered) {
+        setTimeout(scrollToHighlight, 300);
+      } else {
+        scrollToHighlight();
+      }
     },
-    [ann]
+    [ann, ensureSidebarVisible]
   );
 
   // 处理编辑
@@ -401,19 +462,28 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
   // 高亮点击处理
   const handleHighlightClick = useCallback(
     (id: number) => {
+      const openTriggered = ensureSidebarVisible();
       const index = ann.findIndex((a) => a.id === id);
       if (index !== -1) {
         const cardEl = document.getElementById(`annotation-card-${index}`);
         if (cardEl) {
-          cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
-          (cardEl as HTMLElement).style.borderColor = "#2563eb";
-          setTimeout(() => {
-            (cardEl as HTMLElement).style.borderColor = editIndex === index ? "#2563eb" : "#e5e7eb";
-          }, 1000);
+          const scrollCard = () => {
+            cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            (cardEl as HTMLElement).style.borderColor = "#2563eb";
+            setTimeout(() => {
+              (cardEl as HTMLElement).style.borderColor =
+                editIndex === index ? "#2563eb" : "#e5e7eb";
+            }, 1000);
+          };
+          if (openTriggered) {
+            setTimeout(scrollCard, 300);
+          } else {
+            scrollCard();
+          }
         }
       }
     },
-    [ann, editIndex]
+    [ann, editIndex, ensureSidebarVisible]
   );
 
   // 取消批注
@@ -423,8 +493,29 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
     window.getSelection()?.removeAllRanges();
   }, [cleanupTempSelection, setSelection]);
 
+  const toggleSidebar = useCallback(() => {
+    if (isMobileLayout) {
+      setSidebarOpen((prev) => !prev);
+    }
+  }, [isMobileLayout]);
+
+  const closeSidebar = useCallback(() => {
+    if (isMobileLayout) {
+      setSidebarOpen(false);
+    }
+  }, [isMobileLayout]);
+
+  const containerClasses = [
+    "markdown-annotator-container",
+    className || "",
+    isMobileLayout ? "is-mobile" : "",
+    sidebarOpen ? "sidebar-open" : "sidebar-collapsed",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className={`markdown-annotator-container ${className || ""}`}>
+    <div className={containerClasses}>
       <div ref={markdownRef} className="markdown-annotator-markdown">
         <HighlightedMarkdown
           content={clean}
@@ -444,6 +535,21 @@ export function MarkdownAnnotator(props: MarkdownAnnotatorProps) {
         onDelete={deleteAnnotation}
         onAnchorToHighlight={anchorToHighlight}
       />
+
+      {isMobileLayout && (
+        <>
+          <button className="markdown-annotator-sidebar-toggle" onClick={toggleSidebar}>
+            {sidebarOpen ? "收起批注" : "查看批注"}
+          </button>
+          {sidebarOpen && (
+            <div
+              className="markdown-annotator-sidebar-backdrop"
+              onClick={closeSidebar}
+              aria-label="关闭批注侧栏"
+            />
+          )}
+        </>
+      )}
 
       <PopoverEditor
         ref={popoverRef}
